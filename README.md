@@ -47,6 +47,25 @@ create a new component for **pages**:
 nx g @nx/react:component --project pages
 ```
 
+### Prisma ORM:
+
+Generate a new schema:
+
+```bash
+nx generate prisma-generator
+```
+
+
+**Migrations:**
+
+```bash
+prisma db push --schema="./libs/prisma-clients/NAME/prisma/schema.prisma"
+```
+
+```bash
+prisma generate --schema="./libs/prisma-clients/NAME/prisma/schema.prisma"
+```
+
 
 ## TODO:
 
