@@ -54,7 +54,7 @@ nx g @nx/react:component --project pages
 - [x] krakend n8n nx added
 - [x] n8n nx added
 - [ ] ml-flow added
-- [ ] air-flow added
+- [x] air-flow added
 - [ ] prometheus added
 - [ ] grahana added
 - [ ] writed base all-in-one deploy script
