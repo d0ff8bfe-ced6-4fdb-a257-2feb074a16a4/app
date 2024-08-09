@@ -1,0 +1,11 @@
+{
+    "name": "deploy-kraken-d",
+    "targets": {
+      "deploy": {
+        "executor": "nx:run-commands",
+        "options": {
+          "command": "kubectl apply -f infrastructure/base/krakend/deployment-definition.yaml"
+        }
+      }
+    }
+  }
