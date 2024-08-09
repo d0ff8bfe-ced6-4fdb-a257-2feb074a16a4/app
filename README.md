@@ -78,5 +78,8 @@ prisma generate --schema="./libs/prisma-clients/NAME/prisma/schema.prisma"
 - [ ] grahana added
 - [ ] writed base all-in-one deploy script
 - [x] prisma generator added
+- [x] backend projects added
 - [ ] backend docs added
 - [ ] AGW configured
+
+- [ ] Настоить 
