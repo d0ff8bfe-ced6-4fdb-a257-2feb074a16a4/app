@@ -6,6 +6,12 @@
         "options": {
           "command": "kubectl apply -f infrastructure/base/krakend/deployment-definition.yaml"
         }
-      }
+      },
+      "undeploy": {
+        "executor": "nx:run-commands",
+        "options": {
+          "command": "kubectl delete -f infrastructure/base/krakend/deployment-definition.yaml"
+        }
+      },
     }
   }

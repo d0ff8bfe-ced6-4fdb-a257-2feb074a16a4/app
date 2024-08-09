@@ -41,4 +41,23 @@ create a new component for **entities**:
 nx g @nx/react:component --project entities
 ```
 
+create a new component for **pages**:
 
+```bash
+nx g @nx/react:component --project pages
+```
+
+
+## TODO:
+
+- [x] base monorepo nx init
+- [x] krakend n8n nx added
+- [x] n8n nx added
+- [ ] ml-flow added
+- [ ] air-flow added
+- [ ] prometheus added
+- [ ] grahana added
+- [ ] writed base all-in-one deploy script
+- [ ] prisma generator added
+- [ ] backend docs added
+- [ ] AGW configured

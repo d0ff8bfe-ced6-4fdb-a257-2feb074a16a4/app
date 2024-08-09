@@ -1,0 +1,23 @@
+{
+  "name": "deploy-n8n",
+  "targets": {
+    "deploy": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "cd infrastructure/base/n8n && kubectl apply -k ."
+      }
+    },
+    "undeploy": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "cd infrastructure/base/n8n && kubectl delete -k ."
+      }
+    },
+    "status": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "kubectl get svc"
+      }
+    }
+  }
+}
