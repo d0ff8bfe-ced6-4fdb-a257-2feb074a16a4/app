@@ -124,13 +124,39 @@ spec:
 
   tree.write(yamlFilePath, yamlContent.trim());
 
+  // Создание project.json для выполнения K8s команд
+  const projectJsonPath = `${infrastructurePath}/project.json`;
+  const projectJsonContent = {
+    "name": `database-deploy-${name}`,
+    "version": 1,
+    "type": "application",
+    "targets": {
+      "deploy": {
+        "executor": "nx:run-commands",
+        "options": {
+          "command": `kubectl apply -f infrastructure/database/${name}/database-${name}.yaml`,
+          "cwd": infrastructurePath
+        }
+      },
+      "delete": {
+        "executor": "nx:run-commands",
+        "options": {
+          "command": `kubectl delete -f infrastructure/database/${name}/database-${name}.yaml`,
+          "cwd": infrastructurePath
+        }
+      }
+    }
+  };
+
+  tree.write(projectJsonPath, JSON.stringify(projectJsonContent, null, 2));
+
   // Обновление файла .env
   if (!tree.exists('.env')) {
     tree.write('.env', '');
   }
 
   let contents = tree.read('.env').toString();
-  contents += `\n${constantName}_SOURCE_URL=${schema.connectionString}\n`;
+  contents += `${constantName}_SOURCE_URL=${schema.connectionString}\n`;
   tree.write('.env', contents);
 
   // Обновление экспорта клиентов Prisma
