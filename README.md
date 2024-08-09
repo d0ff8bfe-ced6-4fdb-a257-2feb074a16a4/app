@@ -77,6 +77,6 @@ prisma generate --schema="./libs/prisma-clients/NAME/prisma/schema.prisma"
 - [ ] prometheus added
 - [ ] grahana added
 - [ ] writed base all-in-one deploy script
-- [ ] prisma generator added
+- [x] prisma generator added
 - [ ] backend docs added
 - [ ] AGW configured
