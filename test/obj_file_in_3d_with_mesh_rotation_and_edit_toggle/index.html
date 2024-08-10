@@ -7,12 +7,20 @@
     <style>
         body { margin: 0; }
         canvas { display: block; }
+        button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            z-index: 9999;
+        }
     </style>
 </head>
 <body>
+<button id="arButton">Start AR</button>
 <script src="https://cdn.jsdelivr.net/npm/three@0.135.0/build/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.135.0/examples/js/loaders/OBJLoader.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.135.0/examples/jsm/webxr/ARButton.js"></script>
 
 <script>
     let scene, camera, renderer;
@@ -37,9 +45,16 @@
         renderer.xr.enabled = true;
         document.body.appendChild(renderer.domElement);
 
-        // AR-кнопка
-        const arButton = ARButton.createButton(renderer);
-        document.body.appendChild(arButton);
+        // Кнопка для включения AR
+        const arButton = document.getElementById('arButton');
+        arButton.addEventListener('click', () => {
+            navigator.xr.requestSession('immersive-ar', {
+                requiredFeatures: ['local-floor']
+            }).then((session) => {
+                renderer.xr.setSession(session);
+                arButton.style.display = 'none';
+            });
+        });
 
         // Контроллер
         controller = renderer.xr.getController(0);
