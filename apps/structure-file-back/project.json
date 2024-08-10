@@ -1,0 +1,55 @@
+{
+    "name": "structure-file-back",
+    "root": "apps/structure-file-back",
+    "sourceRoot": "apps/structure-file-back",
+    "projectType": "application",
+    "targets": {
+      "up": {
+        "executor": "nx:run-commands",
+        "options": {
+          "commands": [
+            "docker-compose up -d"
+          ],
+          "cwd": "apps/structure-file-back",
+          "parallel": false
+        }
+      },
+      "down": {
+        "executor": "nx:run-commands",
+        "options": {
+          "commands": [
+            "docker-compose down"
+          ],
+          "cwd": "apps/structure-file-back",
+          "parallel": false
+        }
+      },
+      "artisan:migrate": {
+        "executor": "nx:run-commands",
+        "options": {
+          "command": "docker-compose exec app php artisan migrate --seed",
+          "cwd": "apps/structure-file-back",
+          "parallel": false
+        }
+      },
+      "test": {
+        "executor": "nx:run-commands",
+        "options": {
+          "command": "docker-compose exec app php artisan test",
+          "cwd": "apps/structure-file-back",
+          "parallel": false
+        }
+      },
+      "dev": {
+        "executor": "nx:run-commands",
+        "options": {
+          "commands": [
+            "docker-compose exec app npm run dev"
+          ],
+          "cwd": "apps/structure-file-back",
+          "parallel": false
+        }
+      }
+    },
+    "tags": []
+  }
