@@ -1,12 +1,13 @@
 from django.shortcuts import render
 from .forms import ConstructionForm
 from django.http import JsonResponse
-from .models import Material
+from .models import Material, Estimate
 
 def get_materials(request):
     service_id = request.GET.get('service_id')
     materials = Material.objects.filter(services__id=service_id).values('id', 'name')
     return JsonResponse({'materials': list(materials)})
+
 
 
 def estimate_view(request):
@@ -18,19 +19,34 @@ def estimate_view(request):
             material = form.cleaned_data['material']
             service = form.cleaned_data['service']
             time_estimate = form.cleaned_data['time_estimate']
-            
-            # Calculations
-            square_footage = length * width
+
+            square_meters = length * width
+            square_footage = square_meters * 10.7639
+
             material_cost = square_footage * material.cost_per_square_foot
             labor_cost = time_estimate * service.hourly_rate
             total_cost = material_cost + labor_cost
-            
+
+            # Сохранение расчета в базу данных
+            estimate = Estimate.objects.create(
+                service=service,
+                material=material,
+                length=length,
+                width=width,
+                time_estimate=time_estimate,
+                material_cost=material_cost,
+                labor_cost=labor_cost,
+                total_cost=total_cost
+            )
+
             return render(request, 'estimate_result.html', {
                 'form': form,
+                'square_meters': square_meters,
                 'square_footage': square_footage,
                 'material_cost': material_cost,
                 'labor_cost': labor_cost,
-                'total_cost': total_cost
+                'total_cost': total_cost,
+                'estimate': estimate
             })
     else:
         form = ConstructionForm()

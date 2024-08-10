@@ -29,7 +29,7 @@ class ConstructionForm(forms.Form):
     )
 
     def __init__(self, *args, **kwargs):
-        super(ConstructionForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
         if 'service' in self.data:
             try:
                 service_id = int(self.data.get('service'))
@@ -38,3 +38,8 @@ class ConstructionForm(forms.Form):
                 self.fields['material'].queryset = Material.objects.none()
         else:
             self.fields['material'].queryset = Material.objects.none()
+
+        # Заполняем материалы, если форма уже загружена с выбранной услугой (например, при валидации)
+        if self.initial.get('service'):
+            service_id = self.initial.get('service')
+            self.fields['material'].queryset = Material.objects.filter(services__id=service_id)
