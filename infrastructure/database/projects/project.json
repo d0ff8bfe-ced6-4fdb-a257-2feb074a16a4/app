@@ -1,0 +1,33 @@
+{
+  "name": "database-deploy-projects",
+  "version": 1,
+  "type": "application",
+  "targets": {
+    "deploy": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "kubectl apply -f database-projects.yaml",
+        "cwd": "infrastructure/database/projects"
+      }
+    },
+    "delete": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "kubectl delete -f database-projects.yaml",
+        "cwd": "infrastructure/database/projects"
+      }
+    },
+    "generate": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npx prisma generate --schema=\"./libs/prisma-clients/projects/prisma/schema.prisma\""
+      }
+    },
+    "migrate": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npx prisma db push --schema=\"./libs/prisma-clients/projects/prisma/schema.prisma\""
+      }
+    }
+  }
+}

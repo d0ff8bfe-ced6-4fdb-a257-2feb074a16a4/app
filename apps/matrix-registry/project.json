@@ -1,0 +1,64 @@
+{
+  "name": "matrix-registry",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/matrix-registry/src",
+  "projectType": "application",
+  "targets": {
+    "build": {
+      "executor": "@nx/webpack:webpack",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "target": "node",
+        "compiler": "tsc",
+        "outputPath": "dist/apps/matrix-registry",
+        "main": "apps/matrix-registry/src/main.ts",
+        "tsConfig": "apps/matrix-registry/tsconfig.app.json",
+        "assets": ["apps/matrix-registry/src/assets"],
+        "isolatedConfig": true,
+        "webpackConfig": "apps/matrix-registry/webpack.config.js"
+      },
+      "configurations": {
+        "development": {},
+        "production": {}
+      }
+    },
+    "serve": {
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "matrix-registry:build"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "matrix-registry:build:development"
+        },
+        "production": {
+          "buildTarget": "matrix-registry:build:production"
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": ["apps/matrix-registry/**/*.ts"]
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "apps/matrix-registry/jest.config.ts",
+        "passWithNoTests": true
+      },
+      "configurations": {
+        "ci": {
+          "ci": true,
+          "codeCoverage": true
+        }
+      }
+    }
+  },
+  "tags": []
+}

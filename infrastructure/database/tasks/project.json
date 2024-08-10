@@ -1,0 +1,33 @@
+{
+  "name": "database-deploy-tasks",
+  "version": 1,
+  "type": "application",
+  "targets": {
+    "deploy": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "kubectl apply -f database-tasks.yaml",
+        "cwd": "infrastructure/database/tasks"
+      }
+    },
+    "delete": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "kubectl delete -f database-tasks.yaml",
+        "cwd": "infrastructure/database/tasks"
+      }
+    },
+    "generate": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npx prisma generate --schema=./libs/prisma-clients/tasks/prisma/schema.prisma"
+      }
+    },
+    "migrate": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "npx prisma db push --schema=\"./libs/prisma-clients/tasks/prisma/schema.prisma\""
+      }
+    }
+  }
+}

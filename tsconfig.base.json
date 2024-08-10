@@ -15,7 +15,9 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
-      "@neko-docs/prisma-generator": ["prisma-generator/src/index.ts"]
+      "@neko-docs/prisma-clients": ["libs/prisma-clients/index.ts"],
+      "@neko-docs/prisma-clients/*": ["libs/prisma-clients/*"],
+      "@neko-docs/prisma-generator": ["libs/prisma-generator/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"]

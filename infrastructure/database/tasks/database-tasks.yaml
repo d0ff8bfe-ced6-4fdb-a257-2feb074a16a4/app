@@ -1,0 +1,64 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: tasks-postgres-config
+data:
+  POSTGRES_DB: tasksDB
+  POSTGRES_USER: postgres
+  POSTGRES_PASSWORD: postgres
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: tasks-postgres-service
+spec:
+  ports:
+    - port: 5433
+      targetPort: 5432
+  selector:
+    app: tasks-postgres
+  type: ClusterIP
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: tasks-postgres-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: tasks-postgres
+  template:
+    metadata:
+      labels:
+        app: tasks-postgres
+    spec:
+      containers:
+        - name: postgres
+          image: postgres:13
+          ports:
+            - containerPort: 5432
+          envFrom:
+            - configMapRef:
+                name: tasks-postgres-config
+          volumeMounts:
+            - name: postgres-storage
+              mountPath: /var/lib/postgresql/data
+      volumes:
+        - name: postgres-storage
+          persistentVolumeClaim:
+            claimName: tasks-postgres-pvc
+
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: tasks-postgres-pvc
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
