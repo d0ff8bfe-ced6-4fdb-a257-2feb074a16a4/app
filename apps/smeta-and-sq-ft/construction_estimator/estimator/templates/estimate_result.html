@@ -8,17 +8,29 @@
     <link href="{% static 'css/base.css' %}" rel="stylesheet">
 </head>
 <body>
-    <div class="container">
-        <h1>Результаты расчета</h1>
-        <ul>
-            <li>Площадь: {{ square_meters }} кв. метров</li>
-            <li>Площадь: {{ square_footage }} кв. футов</li>
-            <li>Стоимость материалов: {{ material_cost }} рублей</li>
-            <li>Стоимость работ: {{ labor_cost }} рублей</li>
-            <li>Общая стоимость: {{ total_cost }} рублей</li>
-        </ul>
-        <a href="{% url 'estimate' %}" class="btn btn-primary">Добавить еще</a>
-    </div>
+    {% extends 'base.html' %}
+
+{% block title %}Результаты расчета{% endblock %}
+
+{% block content %}
+<h1>Результаты расчета</h1>
+<ul>
+    <li>Услуга: {{ estimate.service.name }}</li>
+    <li>Материал: {{ estimate.material.name }}</li>
+    <li>Площадь: {{ estimate.length }} м × {{ estimate.width }} м</li>
+    <li>Время: {{ estimate.time_estimate }} часов</li>
+    <li>Общая стоимость: {{ estimate.total_cost }} рублей</li>
+    <li>Комментарий: {{ estimate.comment|default:"Нет комментария" }}</li>
+</ul>
+
+<form method="post">
+    {% csrf_token %}
+    <button type="submit" name="add_to_smeta" class="btn btn-success">Добавить в смету</button>
+    <button type="submit" name="edit_estimate" class="btn btn-warning">Изменить расчет</button>
+    <button type="submit" name="open_smeta" class="btn btn-primary">Открыть текущую смету</button>
+</form>
+{% endblock %}
+
     <script src="{% static 'js/scripts.js' %}"></script>
 </body>
 </html>

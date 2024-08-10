@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+
+{% block title %}Текущая смета - ТехГрад{% endblock %}
+
+{% block content %}
+<h1>Текущая смета</h1>
+{% if estimates %}
+    <ul>
+        {% for estimate in estimates %}
+            <li>
+                Услуга: {{ estimate.service.name }}<br>
+                Материал: {{ estimate.material.name }}<br>
+                Площадь: {{ estimate.length }} м × {{ estimate.width }} м<br>
+                Время: {{ estimate.time_estimate }} часов<br>
+                Общая стоимость: {{ estimate.total_cost }} рублей<br>
+                Комментарий: {{ estimate.comment|default:"Нет комментария" }}
+            </li>
+        {% endfor %}
+    </ul>
+{% else %}
+    <p>У вас еще нет сохраненных расчетов.</p>
+{% endif %}
+{% endblock %}

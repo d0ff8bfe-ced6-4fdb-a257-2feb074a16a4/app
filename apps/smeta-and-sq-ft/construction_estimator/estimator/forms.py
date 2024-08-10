@@ -18,7 +18,7 @@ class ConstructionForm(forms.Form):
         widget=forms.Select(attrs={'class': 'form-select', 'id': 'service-select'})
     )
     material = forms.ModelChoiceField(
-        queryset=Material.objects.none(),  # Изначально пустой список
+        queryset=Material.objects.none(),
         label='Материал',
         widget=forms.Select(attrs={'class': 'form-select', 'id': 'material-select'})
     )
@@ -27,9 +27,14 @@ class ConstructionForm(forms.Form):
         min_value=0, 
         widget=forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Введите время'})
     )
+    comment = forms.CharField(
+        label='Комментарий', 
+        required=False, 
+        widget=forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Введите комментарий (необязательно)', 'rows': 3})
+    )
 
     def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
+        super(ConstructionForm, self).__init__(*args, **kwargs)
         if 'service' in self.data:
             try:
                 service_id = int(self.data.get('service'))
@@ -38,8 +43,3 @@ class ConstructionForm(forms.Form):
                 self.fields['material'].queryset = Material.objects.none()
         else:
             self.fields['material'].queryset = Material.objects.none()
-
-        # Заполняем материалы, если форма уже загружена с выбранной услугой (например, при валидации)
-        if self.initial.get('service'):
-            service_id = self.initial.get('service')
-            self.fields['material'].queryset = Material.objects.filter(services__id=service_id)
