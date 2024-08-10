@@ -1,0 +1,40 @@
+.link {
+
+  & a {
+    background-color: var(--bg);
+    transition: 0.3s all ease;
+    padding: 5px 20px 10px;
+    border-radius: var(--border-radius-1);
+    display: flex;
+    align-items: baseline;
+    position: relative;
+    gap: 20px;
+    cursor: pointer;
+    &:hover {
+      background-color: var(--bg-dark);
+    }
+
+    &:active {
+      background-color: var(--bg-dark);
+      filter: brightness(120%);
+    }
+  }
+
+
+  & svg {
+    display: block;
+    width: 25px;
+    height: 25px;
+    transform: translateY(5px);
+
+
+  }
+
+}
+
+.active a {
+  font-weight: 900;
+  color: var(--primary) !important;
+
+
+}

@@ -1,0 +1,54 @@
+.wrapper {
+  display: flex;
+  gap: 20px;
+  width: 100%;
+  background-color: var(--bg);
+  border-radius: var(--border-radius-2);
+
+  & .add {
+    width: 100%;
+    min-width: 300px;
+    padding: 10px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    cursor: pointer;
+    border-radius: var(--border-radius-2);
+
+    transition: 0.3s all ease;
+    background-color: var(--bg);
+
+    &:hover {
+      filter: brightness(85%);
+    }
+  }
+
+  & .form {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    border-radius: var(--border-radius-2);
+    gap: 10px;
+    min-width: 300px;
+    padding: 20px;
+
+
+    & .input {
+      padding: 10px 20px;
+      border-radius: var(--border-radius-6);
+    }
+
+    &.transfer {
+      gap: 20px;
+      flex-direction: column;
+    }
+
+
+    &Control {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+  }
+}

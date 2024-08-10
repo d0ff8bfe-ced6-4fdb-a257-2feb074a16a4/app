@@ -1,0 +1,30 @@
+.table {
+  width: 100%;
+  border-radius: var(--border-radius-2);
+  border-collapse: collapse;
+  table-layout: fixed;
+  overflow: auto;
+  min-height: 100vh;
+  height: 100%;
+
+
+  th, td {
+    border: 1px solid #eee;
+    background-color: var(--bg);
+    text-align: center;
+    height: 50px;
+    padding: 5px;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+
+  th {
+    background-color: var(--bg);
+    font-weight: bold;
+  }
+
+  .timeCell {
+    background-color: var(--bg);
+    font-weight: bold;
+  }
+}

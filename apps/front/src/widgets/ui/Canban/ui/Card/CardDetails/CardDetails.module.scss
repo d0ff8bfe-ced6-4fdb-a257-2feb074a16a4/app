@@ -1,0 +1,81 @@
+.modal {
+  background-color: var(--bg);
+  padding: 20px;
+  border-radius: var(--border-radius-2);
+  min-width: 1000px;
+
+  & .heading {
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+
+  & .labels {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 20px 0;
+    border-bottom: 3px solid var(--bg-dark);
+    &List {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+
+      &Item {
+        display: flex;
+        padding: 6px 12px;
+        border-radius: var(--border-radius-6);
+        align-items: center;
+        gap: 10px;
+      }
+    }
+  }
+
+  & .tasks {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 20px 0;
+    border-bottom: 3px solid var(--bg-dark);
+    &Heading {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    &List {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      &Item {
+        display: flex;
+        gap: 20px;
+        align-items: center;
+        justify-content: space-between;
+        & .control {
+          display: flex;
+          gap: 20px;
+          align-items: center;
+        }
+
+        & .checkbox {
+          width: 20px;
+          height: 20px;
+          border-radius: 50%;
+        }
+      }
+    }
+  }
+  & .tools {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 20px 0;
+
+    &Button {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+  }
+}

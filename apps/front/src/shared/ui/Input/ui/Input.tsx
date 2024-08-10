@@ -8,7 +8,7 @@ export const Input = (
     {
         color = ColorEnum.TEXT,
         border = BorderEnum.H1,
-        bgColor = ColorEnum.WHITE,
+        bgColor = ColorEnum.TEXT,
         value,
         size = SizeEnum.H1,
         label,
