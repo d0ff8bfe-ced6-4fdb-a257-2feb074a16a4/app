@@ -1,19 +1,13 @@
 from django.shortcuts import render, redirect
-from .forms import ConstructionForm
 from django.http import JsonResponse
+from .forms import ConstructionForm
 from .models import Material, Estimate
+from decimal import Decimal
 
 def get_materials(request):
     service_id = request.GET.get('service_id')
     materials = Material.objects.filter(services__id=service_id).values('id', 'name')
     return JsonResponse({'materials': list(materials)})
-
-
-
-from django.shortcuts import render
-from decimal import Decimal  # Импортируем Decimal
-from .forms import ConstructionForm
-from .models import Estimate
 
 def estimate_view(request):
     session_key = request.session.session_key
@@ -52,15 +46,7 @@ def estimate_view(request):
                 session_key=session_key
             )
 
-            return render(request, 'estimate_result.html', {
-                'form': form,
-                'square_meters': square_meters,
-                'square_footage': square_footage,
-                'material_cost': material_cost,
-                'labor_cost': labor_cost,
-                'total_cost': total_cost,
-                'estimate': estimate
-            })
+            return redirect('estimate_result', estimate_id=estimate.id)
     else:
         form = ConstructionForm()
 
@@ -72,7 +58,6 @@ def estimate_view(request):
         'estimates': estimates
     })
 
-
 def estimate_result(request, estimate_id):
     try:
         estimate = Estimate.objects.get(id=estimate_id, session_key=request.session.session_key)
@@ -82,7 +67,8 @@ def estimate_result(request, estimate_id):
     if request.method == 'POST':
         if 'add_to_smeta' in request.POST:
             # Обработка добавления в смету
-            # Возможно, стоит добавить флаг или переместить расчет в отдельную таблицу сметы
+            estimate.saved_to_smeta = True  # Устанавливаем флаг
+            estimate.save()  # Сохраняем изменения
             return redirect('smeta_view')
         elif 'edit_estimate' in request.POST:
             # Обработка редактирования
@@ -93,7 +79,6 @@ def estimate_result(request, estimate_id):
 
     return render(request, 'estimate_result.html', {'estimate': estimate})
 
-
 def estimate_edit(request, estimate_id):
     try:
         estimate = Estimate.objects.get(id=estimate_id, session_key=request.session.session_key)
@@ -103,12 +88,7 @@ def estimate_edit(request, estimate_id):
     if request.method == 'POST':
         form = ConstructionForm(request.POST, instance=estimate)
         if form.is_valid():
-            estimate.length = form.cleaned_data['length']
-            estimate.width = form.cleaned_data['width']
-            estimate.material = form.cleaned_data['material']
-            estimate.service = form.cleaned_data['service']
-            estimate.time_estimate = form.cleaned_data['time_estimate']
-            estimate.comment = form.cleaned_data['comment']
+            estimate = form.save(commit=False)
 
             square_meters = estimate.length * estimate.width
             square_footage = square_meters * Decimal('10.7639')
@@ -126,5 +106,9 @@ def estimate_edit(request, estimate_id):
 
 
 def smeta_view(request):
-    estimates = Estimate.objects.filter(session_key=request.session.session_key)
+    estimates = Estimate.objects.filter(session_key=request.session.session_key, saved_to_smeta=True)
     return render(request, 'smeta_view.html', {'estimates': estimates})
+
+def export_view(request):
+    # Здесь будет логика экспорта
+    return render(request, 'export.html')
