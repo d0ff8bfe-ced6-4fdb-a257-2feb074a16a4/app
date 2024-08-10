@@ -13,13 +13,11 @@
 <script type="module">
     import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.135.0/build/three.module.js';
     import { ARButton } from 'https://cdn.jsdelivr.net/npm/three@0.135.0/examples/jsm/webxr/ARButton.js';
-    import { TextGeometry } from 'https://cdn.jsdelivr.net/npm/three@0.135.0/examples/jsm/geometries/TextGeometry.js';
-    import { FontLoader } from 'https://cdn.jsdelivr.net/npm/three@0.135.0/examples/jsm/loaders/FontLoader.js';
 
     let scene, camera, renderer;
     let controller;
     let labelMesh;
-    let font;
+    let labelTexture;
 
     init();
     animate();
@@ -51,24 +49,32 @@
         light.position.set(0.5, 1, 0.25);
         scene.add(light);
 
-        // Загрузка шрифта для текстовой метки
-        const loader = new FontLoader();
-        loader.load('https://threejs.org/examples/fonts/helvetiker_regular.typeface.json', function (loadedFont) {
-            font = loadedFont;
-            createLabelMesh();
-        });
+        // Создание текстуры для текстовой метки
+        labelTexture = new THREE.CanvasTexture(createLabelCanvas('Ready'));
+        const labelMaterial = new THREE.MeshBasicMaterial({ map: labelTexture, transparent: true });
+        const labelGeometry = new THREE.PlaneGeometry(0.2, 0.1);
+        labelMesh = new THREE.Mesh(labelGeometry, labelMaterial);
+        labelMesh.position.set(0, 0, -0.3);
+        controller.add(labelMesh);
     }
 
-    function createLabelMesh() {
-        const geometry = new TextGeometry('Ready', {
-            font: font,
-            size: 0.05,
-            height: 0.01
-        });
-        const material = new THREE.MeshBasicMaterial({ color: 0xffffff });
-        labelMesh = new THREE.Mesh(geometry, material);
-        labelMesh.position.set(0, 0, -0.1);
-        controller.add(labelMesh);
+    function createLabelCanvas(text) {
+        const canvas = document.createElement('canvas');
+        const context = canvas.getContext('2d');
+        canvas.width = 512;
+        canvas.height = 256;
+        context.fillStyle = 'rgba(0, 0, 0, 0.5)';
+        context.fillRect(0, 0, canvas.width, canvas.height);
+        context.fillStyle = 'white';
+        context.font = '48px Arial';
+        context.fillText(text, 10, 50);
+        return canvas;
+    }
+
+    function updateLabel(text) {
+        const newTexture = new THREE.CanvasTexture(createLabelCanvas(text));
+        labelMesh.material.map.dispose();  // Удаление старой текстуры
+        labelMesh.material.map = newTexture;  // Замена на новую текстуру
     }
 
     function onSelectStart() {
@@ -77,26 +83,6 @@
 
     function onSelectEnd() {
         updateLabel('Button Released!');
-    }
-
-    function updateLabel(text) {
-        if (labelMesh) {
-            // Удаление старой метки
-            controller.remove(labelMesh);
-            labelMesh.geometry.dispose();
-            labelMesh.material.dispose();
-
-            // Создание новой метки
-            const geometry = new TextGeometry(text, {
-                font: font,
-                size: 0.05,
-                height: 0.01
-            });
-            const material = new THREE.MeshBasicMaterial({ color: 0xffffff });
-            labelMesh = new THREE.Mesh(geometry, material);
-            labelMesh.position.set(0, 0, -0.1);
-            controller.add(labelMesh);
-        }
     }
 
     function animate() {
