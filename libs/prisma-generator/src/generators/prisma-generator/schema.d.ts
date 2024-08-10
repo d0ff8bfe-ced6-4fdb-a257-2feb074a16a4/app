@@ -17,17 +17,12 @@ export interface PrismaGeneratorGeneratorSchema {
         { "value": "sqlite", "label": "SQLite" },
         { "value": "mongodb", "label": "MongoDB" }
       ]
+    },
+    "connectionString": {
+      "type": "string",
+      "description": "Connection String",
+      "x-prompt": "What is the connection string you want to use?"
     }
   },
-  "connectionString": {
-    "type": "string",
-    "description": "Connection String",
-    "x-prompt": "What is the connection string you want to use?"
-  },
-  "port": {
-    "type": "number",
-    "description": "Port for the database service",
-    "x-prompt": "What port should be used for the database service?"
-  },
-  "required": ["name", "provider", "connectionString", "port"],
+  "required": ["name", "provider", "connectionString"],
 }

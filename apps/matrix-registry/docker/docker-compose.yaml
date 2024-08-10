@@ -1,0 +1,33 @@
+version: '3.7'
+services:
+  database:
+    image: postgres:12.1-alpine
+    container_name: asc_nslai_neko-docs_matrix_db
+    restart: always
+    ports:
+      - 5440:5432
+    volumes:
+      - ./data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: matrix
+      POSTGRES_USER: user2235
+      POSTGRES_PASSWORD: atlantium
+    networks:
+      - matrix-database
+
+  adminer:
+    image: adminer
+    container_name: asc_nslai_neko-docs_matrix_adminer
+    restart: always
+    depends_on:
+      - database
+    ports:
+      - "8780:8080"
+    networks:
+      - matrix-database
+
+networks:
+  matrix-database:
+    external: false
+    name: matrix
+    driver: bridge

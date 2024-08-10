@@ -1,57 +1,43 @@
+/// <reference types="vitest" />
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
-import svgx from '@svgx/vite-plugin-react';
-import { nxViteTsPaths } from '@nx/vite/plugins/nx-tsconfig-paths.plugin';
+import viteTsConfigPaths from 'vite-tsconfig-paths';
 
 export default defineConfig({
-  root: __dirname,
-  cacheDir: '../../node_modules/.vite/apps/front',
+  cacheDir: '../../node_modules/.vite/front',
 
   server: {
     port: 4200,
-    host: 'localhost'
+    host: 'localhost',
   },
 
   preview: {
     port: 4300,
-    host: 'localhost'
+    host: 'localhost',
   },
+
   plugins: [
     react(),
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-expect-error
-    svgx(),
-    nxViteTsPaths()],
-  resolve: {
-    alias: {
-      '@': '/src',
+    viteTsConfigPaths({
+      root: '../../',
+    }),
+  ],
 
-      '@styles': '/src/app/styles',
+  // Uncomment this if you are using workers.
+  // worker: {
+  //  plugins: [
+  //    viteTsConfigPaths({
+  //      root: '../../',
+  //    }),
+  //  ],
+  // },
 
-      '@app': '/src/app',
-
-      '@pages': '/src/pages',
-
-      '@shared': '/src/shared',
-
-      '@assets': '/src/shared/assets',
-
-      '@widgets': '/src/widgets',
-
-
-      '@features': '/src/features',
-
-      '@entities': '/src/entities',
-
-      '@store': '/src/shared/lib/store'
-    }
+  test: {
+    globals: true,
+    cache: {
+      dir: '../../node_modules/.vitest',
+    },
+    environment: 'jsdom',
+    include: ['src/**/*.{test,spec}.{js,mjs,cjs,ts,mts,cts,jsx,tsx}'],
   },
-  build: {
-    outDir: '../../dist/apps/front',
-    emptyOutDir: true,
-    reportCompressedSize: true,
-    commonjsOptions: {
-      transformMixedEsModules: true
-    }
-  }
 });

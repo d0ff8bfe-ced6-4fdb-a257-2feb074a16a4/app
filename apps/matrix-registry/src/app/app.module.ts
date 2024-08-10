@@ -2,10 +2,10 @@ import { Module } from '@nestjs/common';
 
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { ProjectModule } from '../project/project.module';
+import {MatrixModule} from "../matrix/matrix.module";
 
 @Module({
-  imports: [ProjectModule],
+  imports: [MatrixModule],
   controllers: [AppController],
   providers: [AppService],
 })

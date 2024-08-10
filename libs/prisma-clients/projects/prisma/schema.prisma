@@ -11,19 +11,60 @@ datasource db {
   url      = env("PROJECTS_SOURCE_URL")
 }
 
-model Participant {
-  id        Int    @id @default(autoincrement())
-  name      String
-  avatarUrl String
-  projectId Int
-  project   Project @relation(fields: [projectId], references: [id])
+enum ProjectTypeEnum {
+  INPROGRESS
+}
+
+enum TaskTypeEnum {
+  ACTION
+}
+
+enum TaskPriorityEnum {
+  HIGH
 }
 
 model Project {
-  id          Int          @id @default(autoincrement())
-  title       String
-  description String
-  status      Json
-  participants Participant[]
-  icons       Json
+  id           String    @id @default(cuid()) // Уникальный идентификатор проекта
+  date         DateTime  // Дата создания проекта
+  type         ProjectTypeEnum // Тип проекта
+  title        String    // Название проекта
+  status       Status?   // Статус проекта (опциональный)
+  description  String    // Описание проекта
+  contributors Contributor[] // Участники проекта
+  tasks        Task[]    // Задачи, связанные с проектом
+}
+
+model Status {
+  id            String  @id @default(cuid()) // Уникальный идентификатор статуса
+  daysRemaining Int     // Количество дней до завершения
+  progress      Int     // Прогресс выполнения (в процентах)
+  project       Project @relation(fields: [projectId], references: [id])
+  projectId     String  @unique // Внешний ключ на проект должен быть уникальным
+}
+
+model Contributor {
+  id        String @id @default(cuid()) // Уникальный идентификатор участника
+  name      String // Имя участника
+  img       String // Ссылка на изображение участника
+  project   Project? @relation(fields: [projectId], references: [id])
+  projectId String? // Внешний ключ на проект (необязательно)
+  task      Task? @relation(fields: [taskId], references: [id])
+  taskId    String? // Внешний ключ на задачу (необязательно)
+}
+
+model Task {
+  id           String           @id @default(cuid()) // Уникальный идентификатор задачи
+  title        String // Название задачи
+  contributors Contributor[] // Участники задачи
+  date         DateTime // Дата задачи
+  project      Project @relation(fields: [projectId], references: [id])
+  projectId    String // Внешний ключ на проект
+  type         TaskTypeEnum // Тип задачи
+  priority     TaskPriorityEnum // Приоритет задачи
+  description  String // Описание задачи
+  subtasks     Task[] @relation("Subtasks") // Подзадачи
+  parentTask   Task?  @relation("Subtasks", fields: [parentTaskId], references: [id])
+  parentTaskId String? // Внешний ключ на родительскую задачу
+  history      Json? // История задачи
+  files        Json? // Файлы, связанные с задачей
 }

@@ -15,6 +15,7 @@
     "skipDefaultLibCheck": true,
     "baseUrl": ".",
     "paths": {
+      "@ascc": ["config/index.ts"],
       "@neko-docs/prisma-clients": ["libs/prisma-clients/index.ts"],
       "@neko-docs/prisma-clients/*": ["libs/prisma-clients/*"],
       "@neko-docs/prisma-generator": ["libs/prisma-generator/src/index.ts"]

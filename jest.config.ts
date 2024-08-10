@@ -1,5 +1,5 @@
-import { getJestProjectsAsync } from '@nx/jest';
+import { getJestmatrix-registry } from '@nx/jest';
 
-export default async () => ({
-  projects: await getJestProjectsAsync(),
-});
+export default {
+  matrix-registry: getJestmatrix-registry(),
+};

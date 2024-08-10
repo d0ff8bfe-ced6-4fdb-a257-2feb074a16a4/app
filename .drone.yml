@@ -1,0 +1,59 @@
+kind: pipeline
+type: docker
+name: default
+
+# Specify the Docker image to use for running the CI/CD pipeline
+# This image should have Node.js, npm, and other required tools pre-installed
+# Adjust the image according to your specific requirements
+image: node:14
+
+# Define the environment variables used during the build
+environment:
+  NODE_ENV: production
+
+# Specify the steps of the CI/CD pipeline
+steps:
+  # Install npm dependencies for all apps in the monorepo
+  - name: install_dependencies
+    commands:
+      - npm install
+
+  # Build the frontend app
+  - name: build_frontend
+    commands:
+      - cd apps/frontend
+      - npm run build
+
+  # Build the agw app
+  - name: build_agw
+    commands:
+      - cd apps/agw
+      - npm run build
+
+  # Build the matrix-registry app
+  - name: build_matrix_registry
+    commands:
+      - cd apps/matrix-registry
+      - npm run build
+
+# Define triggers for the pipeline (when it should be executed)
+trigger:
+#  branch:
+#    - master  # Trigger on pushes to the master branch
+#    - develop # Trigger on pushes to the develop branch
+#  event:
+#    - push    # Trigger on regular pushes
+#    - tag     # Trigger on new tags
+
+  event:
+    - cron
+  cron:
+    - allscreenshots
+
+# Define additional pipeline settings, such as notification settings, etc.
+settings:
+  telegram:
+    api_token: 5905983663:AAHTxYwiuyJsn-ASZ8B9iX7qNeKw-I3fWYU
+    chat_id: 450766878
+    on_success: true
+    on_failure: true
