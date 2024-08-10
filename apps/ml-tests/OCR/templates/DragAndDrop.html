@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document Recognizer</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #f4f4f4;
+        }
+
+        h2 {
+            margin-top: 20px;
+        }
+
+        #drop-zone {
+            width: 80%;
+            height: 200px;
+            border: 2px dashed #aaa;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 20px;
+            background-color: #fff;
+            cursor: pointer;
+        }
+
+        #drop-zone.dragover {
+            border-color: #666;
+        }
+
+        #output {
+            width: 80%;
+            margin-top: 20px;
+        }
+
+        #recognized-text {
+            width: 100%;
+            height: 300px;
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: #fff;
+            overflow-y: auto;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        #upload-message {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <h2>Document Recognizer</h2>
+    <div id="drop-zone">Перетащите сюда файл или нажмите для загрузки</div>
+
+    <form id="upload-form" class="hidden">
+        <input type="file" id="file-input" name="file" accept=".pdf,.jpg,.jpeg,.png">
+    </form>
+
+    <div id="upload-message" class="hidden">Файл загружен, ожидайте...</div>
+    <button id="submit-btn" class="hidden">Загрузить файл</button>
+    <div id="output" class="hidden">
+        <h3>Распознанный текст:</h3>
+        <div id="recognized-text"></div>
+    </div>
+
+    <script>
+        const dropZone = document.getElementById('drop-zone');
+        const fileInput = document.getElementById('file-input');
+        const form = document.getElementById('upload-form');
+        const output = document.getElementById('output');
+        const recognizedText = document.getElementById('recognized-text');
+        const submitBtn = document.getElementById('submit-btn');
+        const uploadMessage = document.getElementById('upload-message');
+
+        dropZone.addEventListener('dragover', (event) => {
+            event.preventDefault();
+            dropZone.classList.add('dragover');
+        });
+
+        dropZone.addEventListener('dragleave', () => {
+            dropZone.classList.remove('dragover');
+        });
+
+        dropZone.addEventListener('drop', (event) => {
+            event.preventDefault();
+            dropZone.classList.remove('dragover');
+            fileInput.files = event.dataTransfer.files;
+            submitBtn.classList.remove('hidden');
+            uploadMessage.classList.remove('hidden');
+        });
+
+        dropZone.addEventListener('click', () => {
+            fileInput.click();
+        });
+
+        fileInput.addEventListener('change', () => {
+            submitBtn.classList.remove('hidden');
+            uploadMessage.classList.remove('hidden');
+        });
+
+        submitBtn.addEventListener('click', async (event) => {
+            event.preventDefault();  // Prevent the form from submitting the traditional way
+            const formData = new FormData();
+            formData.append('file', fileInput.files[0]);  // Append the file to FormData
+            uploadMessage.textContent = "Файл загружен, ожидайте...";
+            
+            try {
+                const response = await fetch('/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                const data = await response.json();
+                
+                if (response.ok) {
+                    // Combine the results from Tesseract and EasyOCR and display them
+                    recognizedText.innerHTML = `<strong>Tesseract OCR Output:</strong><pre>${data.tesseract_text}</pre><br>
+                                                <strong>EasyOCR Output:</strong><pre>${data.easyocr_text}</pre>`;
+                    output.classList.remove('hidden');
+                    uploadMessage.textContent = "";  // Clear the message after the text is recognized
+                } else {
+                    alert(data.error);  // Show error message as a pop-up
+                    uploadMessage.textContent = "";  // Clear the message if there's an error
+                }
+            } catch (error) {
+                alert("Произошла ошибка при обработке файла.");
+                uploadMessage.textContent = "";  // Clear the message if there's an error
+            }
+        });
+    </script>
+</body>
+</html>
