@@ -41,3 +41,4 @@ Thumbs.db
 # ML apps
 !.gitkeep
 apps/ml-modules/elk-rag-search/data/*
+apps/module-workload-profit/__pycache__
