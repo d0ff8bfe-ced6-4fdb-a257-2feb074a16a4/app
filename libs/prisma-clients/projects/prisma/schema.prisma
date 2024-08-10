@@ -23,6 +23,39 @@ enum TaskPriorityEnum {
   HIGH
 }
 
+enum DocumentStatus {
+  DRAFT
+  PUBLISHED
+  ARCHIVED
+}
+
+model Document {
+  id             Int      @id @default(autoincrement())
+  title          String
+  content        String?
+  documentNumber String   @unique
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  authorId       Int
+  author         User     @relation(fields: [authorId], references: [id])
+  status         DocumentStatus
+  tags           Tag[]    @relation("DocumentTags")
+}
+
+model User {
+  id           Int           @id @default(autoincrement())
+  name         String
+  email        String        @unique
+  documents    Document[]
+  contributions Contributor[] // Добавлено поле для связи с Contributor
+}
+
+model Tag {
+  id        Int         @id @default(autoincrement())
+  name      String
+  documents Document[]  @relation("DocumentTags")
+}
+
 model Project {
   id           String    @id @default(cuid()) // Уникальный идентификатор проекта
   date         DateTime  // Дата создания проекта
@@ -43,13 +76,15 @@ model Status {
 }
 
 model Contributor {
-  id        String @id @default(cuid()) // Уникальный идентификатор участника
-  name      String // Имя участника
-  img       String // Ссылка на изображение участника
+  id        String   @id @default(cuid()) // Уникальный идентификатор участника
+  userId    Int?     // ID пользователя, если пользователь связан
+  user      User?    @relation(fields: [userId], references: [id])
+  name      String   // Имя участника
+  img       String   // Ссылка на изображение участника
   project   Project? @relation(fields: [projectId], references: [id])
-  projectId String? // Внешний ключ на проект (необязательно)
-  task      Task? @relation(fields: [taskId], references: [id])
-  taskId    String? // Внешний ключ на задачу (необязательно)
+  projectId String?  // Внешний ключ на проект (необязательно)
+  task      Task?    @relation(fields: [taskId], references: [id])
+  taskId    String?  // Внешний ключ на задачу (необязательно)
 }
 
 model Task {
