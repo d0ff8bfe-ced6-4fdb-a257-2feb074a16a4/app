@@ -1,8 +1,0 @@
-import os
-
-basedir = os.path.abspath(os.path.dirname(__file__))
-
-class Config:
-    SECRET_KEY = os.urandom(24)  # Generates a random 24-byte key
-    SQLALCHEMY_DATABASE_URI = 'sqlite:///construction.db'
-    SQLALCHEMY_TRACK_MODIFICATIONS = False
