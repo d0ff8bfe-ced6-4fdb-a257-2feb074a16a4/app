@@ -16,6 +16,15 @@ onnxmltools = "*"
 streamlit = "*"
 onnxconverter-common = "*"
 onnxruntime = "*"
+g4f = "*"
+langchain = "*"
+langchain-community = "*"
+torch = "*"
+llama-index = "*"
+curl-cffi = "*"
+llama-index-llms-langchain = "*"
+llama-index-embeddings-huggingface = "*"
+llama-index-embeddings-langchain = "*"
 
 [dev-packages]
 

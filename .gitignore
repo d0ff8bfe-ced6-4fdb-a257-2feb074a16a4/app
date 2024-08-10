@@ -37,3 +37,7 @@ testem.log
 # System Files
 .DS_Store
 Thumbs.db
+
+# ML apps
+!.gitkeep
+apps/elk-rag-search/data/*
