@@ -1,0 +1,29 @@
+
+{% load static %}  <!-- Load static files -->
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Расчёт сметы</title>
+    <!-- Link to your base CSS -->
+    <link href="{% static 'css/base.css' %}" rel="stylesheet">
+</head>
+<body>
+    <form method="post">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-primary">Рассчитать заново</button>
+    </form>
+    
+    <h3>Результаты:</h3>
+    <ul>
+        <li>Площадь: {{ square_meters }} кв. метров</li>
+        <li>Площадь: {{ square_footage }} кв. футов</li>
+        <li>Стоимость материалов: {{ material_cost }} рублей</li>
+        <li>Стоимость работ: {{ labor_cost }} рублей</li>
+        <li>Общая стоимость: {{ total_cost }} рублей</li>
+    </ul>
+    
+</body> 
