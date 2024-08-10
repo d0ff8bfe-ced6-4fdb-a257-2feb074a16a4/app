@@ -40,4 +40,4 @@ Thumbs.db
 
 # ML apps
 !.gitkeep
-apps/elk-rag-search/data/*
+apps/ml-modules/elk-rag-search/data/*
