@@ -1,0 +1,37 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
+  & .body {
+    display: flex;
+    gap: 20px;
+
+    & .info {
+      flex: 1 1 60%;
+
+      &.tasks {
+        flex: 1 1 25%;
+      }
+
+      &.hide {
+        flex: 1 0 100%;
+      }
+    }
+
+
+    & .calendar {
+      flex: 1 1 35%;
+
+      &.tasks {
+        flex: 1 1 80%;
+      }
+    }
+  }
+
+  & .heading {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+  }
+}

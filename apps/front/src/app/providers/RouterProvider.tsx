@@ -1,34 +1,37 @@
 import { createBrowserRouter, redirect } from 'react-router-dom';
-import { LoginPage, MainPage, RegisterPage } from '@pages/ui';
-import { AuthProvider } from '@app/providers/AuthProvider.tsx';
-import { SidebarProvider } from '@widgets/lib/utils/SidebarProvider';
+import { CalendarPage, LoginPage, MainPage, RegisterPage } from '@pages/ui';
+import { Provider } from '@widgets/lib';
 
 export const router = createBrowserRouter([
-    {
-        path: '/',
-        // element: <AuthProvider />,
-        children: [
-            {
-                index: true,
-                element: <SidebarProvider><MainPage /></SidebarProvider>,
-            },
-        ],
-    },
-    {
-        path: '/auth',
-        children: [
-            {
-                index: true,
-                loader: async () => redirect('/auth/login'),
-            },
-            {
-                path: 'login',
-                element: <LoginPage />,
-            },
-            {
-                path: 'register',
-                element: <RegisterPage />,
-            },
-        ],
-    },
+  {
+    path: '/',
+    // element: <AuthProvider />,
+    children: [
+      {
+        index: true,
+        element: <Provider><MainPage /></Provider>,
+      },
+      {
+        path: 'calendar',
+        element: <Provider><CalendarPage /></Provider>,
+      },
+    ],
+  },
+  {
+    path: '/auth',
+    children: [
+      {
+        index: true,
+        loader: async () => redirect('/auth/login'),
+      },
+      {
+        path: 'login',
+        element: <LoginPage />,
+      },
+      {
+        path: 'register',
+        element: <RegisterPage />,
+      },
+    ],
+  },
 ]);

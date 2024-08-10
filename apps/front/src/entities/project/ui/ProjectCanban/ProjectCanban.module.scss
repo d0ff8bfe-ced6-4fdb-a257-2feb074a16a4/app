@@ -1,0 +1,94 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 100vw;
+  overflow-x: hidden;
+
+  & .heading {
+    display: flex;
+    gap: 20px;
+
+    & .item {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+
+      & .info {
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        padding: 20px;
+        background-color: var(--bg);
+        width: 440px;
+        border-radius: var(--border-radius-2);
+      }
+
+      & .progress {
+        height: 10px;
+        display: flex;
+        align-items: center;
+        width: 100%;
+        border-radius: var(--border-radius-2);
+        background-color: var(--bg-dark);
+
+        & span {
+          height: 8px;
+          padding: 1px;
+          border-radius: var(--border-radius-2);
+          background-color: var(--primary);
+        }
+      }
+    }
+  }
+}
+
+.taskList {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
+  & .task {
+    display: flex;
+    flex-direction: column;
+    border-radius: var(--border-radius-2);
+    gap: 20px;
+    padding: 20px;
+    background-color: var(--bg);
+
+    & .taskHeader {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      padding-bottom: 5px;
+      border-bottom: 4px solid #eee;
+      align-items: start;
+
+      & .priority {
+        padding: 5px 10px;
+        border-radius: 5px;
+        background-color: rgba(255, 114, 114, 0.5);
+      }
+    }
+  }
+}
+
+.subtaskList {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding-left: 20px;
+
+  & .subtask {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+
+
+    & input {
+      width: 15px;
+      height: 15px;
+    }
+  }
+}

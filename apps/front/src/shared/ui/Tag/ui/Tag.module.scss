@@ -1,7 +1,7 @@
 .tag {
   transition: .3s all ease;
   display: inline-block;
-
+  cursor: pointer;
   &.primaryBg {
     background-color: var(--primary);
     border: 1px solid var(--primary);
@@ -12,11 +12,11 @@
     }
 
     &:hover {
-      background-color: var(--primary-hover);
+      filter: brightness(120%);
     }
 
     &:active {
-      background-color: var(--primary-active);
+      filter: brightness(120%);
     }
   }
 
@@ -31,11 +31,11 @@
     }
 
     &:hover {
-      background-color: var(--secondary-hover);
+      filter: brightness(120%);
     }
 
     &:active {
-      background-color: var(--secondary-active);
+      filter: brightness(120%);
     }
   }
 
@@ -50,11 +50,11 @@
     }
 
     &:hover {
-      background-color: var(--success-hover);
+      filter: brightness(120%);
     }
 
     &:active {
-      background-color: var(--success-active);
+      filter: brightness(120%);
     }
   }
 
@@ -69,11 +69,11 @@
     }
 
     &:hover {
-      background-color: var(--warning-hover);
+      filter: brightness(120%);
     }
 
     &:active {
-      background-color: var(--warning-active);
+      filter: brightness(120%);
     }
   }
 
@@ -88,11 +88,11 @@
     }
 
     &:hover {
-      background-color: var(--danger-hover);
+      filter: brightness(120%);
     }
 
     &:active {
-      background-color: var(--danger-active);
+      filter: brightness(120%);
     }
   }
 
@@ -107,11 +107,11 @@
     }
 
     &:hover {
-      background-color: var(--info-hover);
+      filter: brightness(120%);
     }
 
     &:active {
-      background-color: var(--info-active);
+      filter: brightness(120%);
     }
   }
 
@@ -125,11 +125,11 @@
     }
 
     &:hover {
-      background-color: var(--link-hover);
+      filter: brightness(120%);
     }
 
     &:active {
-      background-color: var(--link-active);
+      filter: brightness(120%);
     }
 
   }

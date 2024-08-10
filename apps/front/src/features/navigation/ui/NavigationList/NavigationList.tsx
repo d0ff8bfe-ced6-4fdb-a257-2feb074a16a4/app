@@ -7,15 +7,9 @@ export const NavigationList = () => {
   const isOpen = useAppSelector(selectSidebar);
   return (
     <ul className={classNames(cls.list, {
-      [cls.hide]: !isOpen
     }, [])}>
       {NavigationConfig.map((item) => (
-        <li
-          key={item.label}
-          className={cls.listItem}
-        >
-          <NavigationItem {...item} />
-        </li>
+        <NavigationItem key={item.label} {...item} />
       ))}
     </ul>
   );

@@ -1,4 +1,5 @@
 export interface INavigation {
-    label: string;
-    path: string;
+  label: string;
+  path: string;
+  icon: string;
 }

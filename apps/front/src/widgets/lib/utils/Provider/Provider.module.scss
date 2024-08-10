@@ -1,0 +1,22 @@
+.wrapper {
+  background-color: var(--bg-dark);
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-height: 100vh;
+  max-width: 100vw;
+  padding: 20px;
+
+  & .content {
+    display: flex;
+    gap: 20px;
+    min-height: calc(100vh - (var(--navbar-height) + 40px));
+  }
+}
+
+.body {
+  overflow-y: scroll;
+  overflow-x: hidden;
+  max-width: calc(100vw - (250px + 40px));
+  flex-grow: 1;
+}

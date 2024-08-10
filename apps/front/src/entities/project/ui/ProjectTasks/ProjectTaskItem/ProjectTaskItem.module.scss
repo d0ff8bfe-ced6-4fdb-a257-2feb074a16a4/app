@@ -1,0 +1,40 @@
+.wrapper {
+  border-radius: var(--border-radius-2);
+  box-shadow: 0px 0px 15px -3px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+
+
+  & .title {
+    &.done {
+      text-decoration: line-through;
+      text-decoration-thickness: 2px;
+    }
+  }
+
+  & .list {
+    display: flex;
+    gap: 10px;
+
+    &Item {
+      width: 45px;
+      height: 45px;
+      border-radius: 50%;
+      background-color: var(--bg-dark);
+    }
+  }
+
+  & .info {
+    display: flex;
+    justify-content: space-between;
+
+    & .icon {
+      & svg {
+        width: 30px;
+        height: 30px;
+      }
+    }
+  }
+}

@@ -1,14 +1,17 @@
 .wrapper {
+  border-radius: var(--border-radius-2);
   transition: 0.3s all ease;
   flex: 0 1 250px;
   display: flex;
+  background-color: var(--bg);
   flex-direction: column;
   gap: 40px;
   align-items: center;
   padding: 20px;
   box-shadow: 0px 10px 15px -3px rgba(0, 0, 0, 0.1);
-  max-height: 100vh;
-
+  max-height: 600px;
+  min-width: 250px;
+  max-width: 250px;
   &.hide {
     padding: 20px 5px;
     flex: 0 1 75px;
@@ -40,7 +43,7 @@
     & svg {
       width: 20px;
       height: 20px;
-      fill: var(--white);
+      fill: var(--text);
     }
 
     &:hover {
