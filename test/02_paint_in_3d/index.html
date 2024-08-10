@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AR Drawing on Quest 3</title>
+    <style>
+        body { margin: 0; }
+        canvas { display: block; }
+    </style>
+</head>
+<body>
+<script type="module">
+    import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.135.0/build/three.module.js';
+    import { ARButton } from 'https://cdn.jsdelivr.net/npm/three@0.135.0/examples/jsm/webxr/ARButton.js';
+
+    let scene, camera, renderer;
+    let controller;
+    let drawing = false;
+
+    init();
+    animate();
+
+    function init() {
+        // Сцена
+        scene = new THREE.Scene();
+
+        // Камера
+        camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 20);
+
+        // Рендерер
+        renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.xr.enabled = true;
+        document.body.appendChild(renderer.domElement);
+
+        // Добавление AR-кнопки
+        document.body.appendChild(ARButton.createButton(renderer));
+
+        // Контроллер
+        controller = renderer.xr.getController(0);
+        controller.addEventListener('selectstart', onSelectStart);
+        controller.addEventListener('selectend', onSelectEnd);
+        scene.add(controller);
+
+        // Свет
+        const light = new THREE.HemisphereLight(0xffffff, 0xbbbbff, 1);
+        light.position.set(0.5, 1, 0.25);
+        scene.add(light);
+    }
+
+    function onSelectStart() {
+        drawing = true;
+    }
+
+    function onSelectEnd() {
+        drawing = false;
+    }
+
+    function animate() {
+        renderer.setAnimationLoop(render);
+    }
+
+    function render() {
+        if (drawing) {
+            const position = new THREE.Vector3();
+            position.setFromMatrixPosition(controller.matrixWorld);
+
+            const geometry = new THREE.SphereGeometry(0.01, 16, 16);
+            const material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+            const sphere = new THREE.Mesh(geometry, material);
+            sphere.position.copy(position);
+            scene.add(sphere);
+        }
+        renderer.render(scene, camera);
+    }
+
+    window.addEventListener('resize', function() {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    }, false);
+</script>
+</body>
+</html>

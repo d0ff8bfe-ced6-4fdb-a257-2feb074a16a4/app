@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="utf-8">
+    <title>AR Panel with Buttons</title>
+    <style>
+        body { margin: 0; }
+        canvas { display: block; }
+    </style>
+</head>
+<body>
+<script type="module">
+    import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.135.0/build/three.module.js';
+    import { ARButton } from 'https://cdn.jsdelivr.net/npm/three@0.135.0/examples/jsm/webxr/ARButton.js';
+
+    let scene, camera, renderer;
+    let controller1, controller2;
+    let panel;
+    let raycaster = new THREE.Raycaster();
+    let tempMatrix = new THREE.Matrix4();
+    let intersectedButton1 = null;
+    let intersectedButton2 = null;
+
+    init();
+    animate();
+
+    function init() {
+        // Создание сцены
+        scene = new THREE.Scene();
+
+        // Создание камеры
+        camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 20);
+
+        // Создание рендерера
+        renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.xr.enabled = true;
+        document.body.appendChild(renderer.domElement);
+
+        // Кнопка AR
+        document.body.appendChild(ARButton.createButton(renderer));
+
+        // Контроллеры
+        controller1 = renderer.xr.getController(0);
+        controller1.addEventListener('selectstart', onSelectStart);
+        controller1.addEventListener('selectend', onSelectEnd);
+        scene.add(controller1);
+
+        const controller1Pointer = createPointer();
+        controller1.add(controller1Pointer);
+
+        controller2 = renderer.xr.getController(1);
+        controller2.addEventListener('selectstart', onSelectStart);
+        controller2.addEventListener('selectend', onSelectEnd);
+        controller2.addEventListener('squeezestart', onSqueezeStart);
+        controller2.addEventListener('squeezeend', onSqueezeEnd);
+        scene.add(controller2);
+
+        const controller2Pointer = createPointer();
+        controller2.add(controller2Pointer);
+
+        // Создание панели
+        panel = createPanel();
+        panel.position.set(0, 0, -0.5);
+        scene.add(panel);
+
+        // Свет
+        const light = new THREE.HemisphereLight(0xffffff, 0xbbbbff, 1);
+        light.position.set(0.5, 1, 0.25);
+        scene.add(light);
+    }
+
+    function createPointer() {
+        const geometry = new THREE.SphereGeometry(0.01, 16, 16);
+        const material = new THREE.MeshBasicMaterial({ color: 0xff0000 });
+        return new THREE.Mesh(geometry, material);
+    }
+
+    function createPanel() {
+        const panelGeometry = new THREE.PlaneGeometry(0.4, 0.2);
+        const panelMaterial = new THREE.MeshBasicMaterial({ color: 0xcccccc, side: THREE.DoubleSide });
+        const panelMesh = new THREE.Mesh(panelGeometry, panelMaterial);
+
+        const buttonGeometry = new THREE.BoxGeometry(0.1, 0.05, 0.02);
+        const buttonMaterial = new THREE.MeshBasicMaterial({ color: 0x00ff00 });
+
+        const button1 = new THREE.Mesh(buttonGeometry, buttonMaterial);
+        button1.position.set(-0.1, 0, 0.01);
+        button1.name = "button1";
+        panelMesh.add(button1);
+
+        const button2 = new THREE.Mesh(buttonGeometry, buttonMaterial);
+        button2.position.set(0.1, 0, 0.01);
+        button2.name = "button2";
+        panelMesh.add(button2);
+
+        return panelMesh;
+    }
+
+    function onSelectStart(event) {
+        const controller = event.target;
+        tempMatrix.identity().extractRotation(controller.matrixWorld);
+        raycaster.ray.origin.setFromMatrixPosition(controller.matrixWorld);
+        raycaster.ray.direction.set(0, 0, -1).applyMatrix4(tempMatrix);
+
+        const intersects = raycaster.intersectObjects(panel.children);
+
+        if (intersects.length > 0) {
+            const intersectedObject = intersects[0].object;
+
+            if (intersectedObject.name === "button1") {
+                intersectedButton1 = intersectedObject;
+                intersectedButton1.material.color.set(0xff0000);
+            } else if (intersectedObject.name === "button2") {
+                intersectedButton2 = intersectedObject;
+                intersectedButton2.material.color.set(0xff0000);
+            }
+        }
+    }
+
+    function onSelectEnd(event) {
+        if (intersectedButton1) {
+            intersectedButton1.material.color.set(0x00ff00);
+            intersectedButton1 = null;
+        }
+        if (intersectedButton2) {
+            intersectedButton2.material.color.set(0x00ff00);
+            intersectedButton2 = null;
+        }
+    }
+
+    let isSqueezing = false;
+
+    function onSqueezeStart(event) {
+        isSqueezing = true;
+    }
+
+    function onSqueezeEnd() {
+        isSqueezing = false;
+    }
+
+    function animate() {
+        renderer.setAnimationLoop(render);
+    }
+
+    function render() {
+        if (isSqueezing) {
+            panel.position.setFromMatrixPosition(controller2.matrixWorld);
+            panel.quaternion.setFromRotationMatrix(controller2.matrixWorld);
+        }
+
+        renderer.render(scene, camera);
+    }
+
+    window.addEventListener('resize', function () {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    }, false);
+</script>
+</body>
+</html>

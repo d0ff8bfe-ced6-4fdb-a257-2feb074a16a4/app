@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Table Client</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+</head>
+<body class="bg-gray-100">
+<div class="container mx-auto p-4">
+    <h1 class="text-2xl font-bold mb-4">Object Coordinates</h1>
+    <div class="bg-white shadow-md rounded p-4">
+        <table class="table-auto w-full">
+            <thead>
+            <tr>
+                <th class="px-4 py-2">Object ID</th>
+                <th class="px-4 py-2">Position</th>
+                <th class="px-4 py-2">Rotation</th>
+            </tr>
+            </thead>
+            <tbody id="object-table-body">
+            <!-- Rows will be added here dynamically -->
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    const socket = io();
+    const objectTableBody = document.getElementById('object-table-body');
+
+    function updateObjectPosition(id, newPosition) {
+        socket.emit('updateObjectPosition', { id, position: newPosition });
+    }
+
+    function createPositionInput(position, id, axis) {
+        const input = document.createElement('input');
+        input.type = 'number';
+        input.value = position[axis];
+        input.classList.add('border', 'px-2', 'py-1', 'mr-2');
+        input.addEventListener('change', () => {
+            const newPosition = { ...position };
+            newPosition[axis] = parseFloat(input.value);
+            updateObjectPosition(id, newPosition);
+        });
+        return input;
+    }
+
+    function updateTableRow(data) {
+        let row = document.getElementById(`row-${data.id}`);
+        if (!row) {
+            row = document.createElement('tr');
+            row.setAttribute('id', `row-${data.id}`);
+            objectTableBody.appendChild(row);
+
+            row.innerHTML = `
+                    <td class="border px-4 py-2">${data.id}</td>
+                    <td class="border px-4 py-2" id="position-${data.id}"></td>
+                    <td class="border px-4 py-2">${JSON.stringify(data.rotation)}</td>
+                `;
+
+            const positionCell = document.getElementById(`position-${data.id}`);
+            positionCell.appendChild(createPositionInput(data.position, data.id, 'x'));
+            positionCell.appendChild(createPositionInput(data.position, data.id, 'y'));
+            positionCell.appendChild(createPositionInput(data.position, data.id, 'z'));
+        } else {
+            const positionInputs = row.querySelectorAll('input[type="number"]');
+            positionInputs[0].value = data.position.x;
+            positionInputs[1].value = data.position.y;
+            positionInputs[2].value = data.position.z;
+        }
+    }
+
+    socket.on('updateObjectPosition', (data) => {
+        updateTableRow(data);
+    });
+
+    socket.on('updatePositions', (users) => {
+        Object.keys(users).forEach((id) => {
+            updateTableRow({ id, position: users[id].position, rotation: users[id].rotation });
+        });
+    });
+</script>
+</body>
+</html>
