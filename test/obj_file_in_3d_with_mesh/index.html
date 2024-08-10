@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AR OBJ Viewer with Preview on Quest 3</title>
+    <title>AR OBJ Viewer with Full Preview on Quest 3</title>
     <style>
         body { margin: 0; }
         canvas { display: block; }
@@ -25,7 +25,7 @@
     let scene, camera, renderer;
     let controller;
     let model = null;
-    let previewMesh = null;
+    let previewMesh = new THREE.Group();  // Группа для объединения всех частей контура
 
     init();
     animate();
@@ -70,10 +70,18 @@
                 model = obj;
                 model.scale.set(0.05, 0.05, 0.05); // Масштабирование модели
 
-                // Создание контура (Wireframe)
-                const wireframeGeometry = new THREE.WireframeGeometry(obj.children[0].geometry);
-                const wireframeMaterial = new THREE.LineBasicMaterial({ color: 0x00ff00 });
-                previewMesh = new THREE.LineSegments(wireframeGeometry, wireframeMaterial);
+                // Создание контура для всех дочерних элементов
+                obj.traverse(function(child) {
+                    if (child.isMesh) {
+                        const wireframeGeometry = new THREE.WireframeGeometry(child.geometry);
+                        const wireframeMaterial = new THREE.LineBasicMaterial({ color: 0x00ff00 });
+                        const wireframe = new THREE.LineSegments(wireframeGeometry, wireframeMaterial);
+                        wireframe.scale.copy(child.scale);
+                        wireframe.position.copy(child.position);
+                        wireframe.rotation.copy(child.rotation);
+                        previewMesh.add(wireframe);
+                    }
+                });
                 previewMesh.scale.set(0.05, 0.05, 0.05);
                 scene.add(previewMesh);
             },
