@@ -13,8 +13,9 @@
         <ul class="space-y-2 mb-6">
             @foreach($files as $file)
                 <li wire:click="showFileVersions('{{ $file->file_name }}')" class="cursor-pointer text-blue-600 hover:underline dark:text-blue-400">{{ $file->file_name }}</li>
-                <livewire:file-viewer url="http://localhost:8000/api/files/download/1/v5_building.obj" />
             @endforeach
+            <livewire:file-viewer url="https://dvv2.k-lab.su/api/files/download/1/v2_building.obj" />
+            <livewire:file-viewer url="https://dvv2.k-lab.su/api/files/download/1/v1_ABB_Articulated_Robot_IRB_6700.obj" />
         </ul>
 
         @if($fileName)
@@ -23,16 +24,10 @@
                 @foreach($versions as $version)
                     <li class="text-gray-700 dark:text-gray-300">
                         {{ $version->file_name }} - v{{ $version->version }} -
-{{--                        <a href="{{ Storage::url($version->file_path) }}" target="_blank" class="text-blue-600 hover:underline dark:text-blue-400">Download</a>--}}
-{{--                        <a href="{{ Storage::url('public/'.$version->file_path) }}" class="text-blue-600 hover:underline dark:text-blue-400">Download 2</a>--}}
                         <a href="{{ route('file:download', ['prj_id' => $version->project_id, 'file_name' => 'v' . $version->version . '_' . $file->file_name]) }}" class="text-blue-600 hover:underline dark:text-blue-400">Download 3</a>
                     </li>
                 @endforeach
             </ul>
         @endif
     </div>
-    <h1 class="text-3xl font-bold mb-6 text-gray-900 dark:text-white">Обозреватель решения BIM/IFC/IFE</h1>
-{{--    <embed src="http://localhost:5173" width="100%" height="900px" type="" class="rounded-xl">--}}
-{{--    <livewire:file-viewer :file-id="'v' . $versions[0]->version . '_' . $file->file_name" />--}}
-{{--    <livewire:file-viewer url="http://localhost:8000/api/files/download/1/v5_building.obj" />--}}
 </div>
