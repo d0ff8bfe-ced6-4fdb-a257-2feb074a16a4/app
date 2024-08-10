@@ -1,0 +1,20 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px;
+  background-color: var(--bg);
+  border-radius: var(--border-radius-2);
+
+
+  & .title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  & .list {
+    display: grid;
+    grid-gap: 20px;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  }
+}

@@ -1,0 +1,19 @@
+.wrapper {
+  border-radius: var(--border-radius-2);
+  padding: 20px;
+  background-color: var(--bg);
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  & .list {
+    padding: 0 20px;
+    display: flex;
+    gap: 20px;
+
+    &Item {
+      cursor: pointer;
+    }
+  }
+}

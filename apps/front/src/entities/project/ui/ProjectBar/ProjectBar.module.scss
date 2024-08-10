@@ -1,0 +1,33 @@
+.wrapper {
+  background-color: var(--bg);
+  padding: 20px;
+  border-radius: var(--border-radius-2);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  & .list {
+    display: flex;
+    gap: 30px;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+
+    &:hover {
+      filter: brightness(150%);
+    }
+  }
+
+  & .icon {
+    &.active {
+      & svg {
+        fill: var(--primary);
+      }
+    }
+    & svg {
+      fill: var(--text);
+      width: 20px;
+      height: 20px;
+    }
+  }
+}

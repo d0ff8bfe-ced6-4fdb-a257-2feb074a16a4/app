@@ -5,7 +5,72 @@
     "esModuleInterop": false,
     "allowSyntheticDefaultImports": true,
     "strict": true,
-    "types": ["vite/client", "vitest"]
+    "types": [
+      "vite/client",
+      "vitest"
+    ],
+    "paths": {
+      "@/": [
+        "src/"
+      ],
+      "@/*": [
+        "src/*"
+      ],
+      "@styles/": [
+        "src/app/styles"
+      ],
+      "@styles/*": [
+        "src/app/styles/*"
+      ],
+      "@app": [
+        "src/app"
+      ],
+      "@app/*": [
+        "src/app/*"
+      ],
+      "@pages": [
+        "src/pages/"
+      ],
+      "@pages/*": [
+        "src/pages/*"
+      ],
+      "@shared": [
+        "src/shared/"
+      ],
+      "@shared/*": [
+        "src/shared/*"
+      ],
+      "@assets": [
+        "src/shared/assets/"
+      ],
+      "@assets/*": [
+        "src/shared/assets/*"
+      ],
+      "@widgets": [
+        "src/widgets/"
+      ],
+      "@widgets/*": [
+        "src/widgets/*"
+      ],
+      "@features": [
+        "src/features/"
+      ],
+      "@features/*": [
+        "src/features/*"
+      ],
+      "@entities": [
+        "src/entities/"
+      ],
+      "@entities/*": [
+        "src/entities/*"
+      ],
+      "@store": [
+        "src/shared/lib/store/*"
+      ],
+      "@store/*": [
+        "src/shared/lib/store/*"
+      ]
+    }
   },
   "files": [],
   "include": [],
