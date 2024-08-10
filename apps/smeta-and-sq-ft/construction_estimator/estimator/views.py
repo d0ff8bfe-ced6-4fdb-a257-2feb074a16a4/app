@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from .forms import ConstructionForm
 from django.http import JsonResponse
 from .models import Material, Estimate
@@ -10,7 +10,17 @@ def get_materials(request):
 
 
 
+from django.shortcuts import render
+from decimal import Decimal  # Импортируем Decimal
+from .forms import ConstructionForm
+from .models import Estimate
+
 def estimate_view(request):
+    session_key = request.session.session_key
+    if not session_key:
+        request.session.save()
+        session_key = request.session.session_key
+
     if request.method == 'POST':
         form = ConstructionForm(request.POST)
         if form.is_valid():
@@ -19,9 +29,10 @@ def estimate_view(request):
             material = form.cleaned_data['material']
             service = form.cleaned_data['service']
             time_estimate = form.cleaned_data['time_estimate']
+            comment = form.cleaned_data['comment']
 
             square_meters = length * width
-            square_footage = square_meters * 10.7639
+            square_footage = square_meters  # Преобразование в Decimal
 
             material_cost = square_footage * material.cost_per_square_foot
             labor_cost = time_estimate * service.hourly_rate
@@ -36,7 +47,9 @@ def estimate_view(request):
                 time_estimate=time_estimate,
                 material_cost=material_cost,
                 labor_cost=labor_cost,
-                total_cost=total_cost
+                total_cost=total_cost,
+                comment=comment,
+                session_key=session_key
             )
 
             return render(request, 'estimate_result.html', {
@@ -51,4 +64,67 @@ def estimate_view(request):
     else:
         form = ConstructionForm()
 
-    return render(request, 'estimate_form.html', {'form': form})
+    # Получение всех расчетов для текущей сессии
+    estimates = Estimate.objects.filter(session_key=session_key)
+
+    return render(request, 'estimate_form.html', {
+        'form': form,
+        'estimates': estimates
+    })
+
+
+def estimate_result(request, estimate_id):
+    try:
+        estimate = Estimate.objects.get(id=estimate_id, session_key=request.session.session_key)
+    except Estimate.DoesNotExist:
+        return redirect('estimate')
+
+    if request.method == 'POST':
+        if 'add_to_smeta' in request.POST:
+            # Обработка добавления в смету
+            # Возможно, стоит добавить флаг или переместить расчет в отдельную таблицу сметы
+            return redirect('smeta_view')
+        elif 'edit_estimate' in request.POST:
+            # Обработка редактирования
+            return redirect('estimate_edit', estimate_id=estimate.id)
+        elif 'open_smeta' in request.POST:
+            # Открытие текущей сметы
+            return redirect('smeta_view')
+
+    return render(request, 'estimate_result.html', {'estimate': estimate})
+
+
+def estimate_edit(request, estimate_id):
+    try:
+        estimate = Estimate.objects.get(id=estimate_id, session_key=request.session.session_key)
+    except Estimate.DoesNotExist:
+        return redirect('estimate')
+
+    if request.method == 'POST':
+        form = ConstructionForm(request.POST, instance=estimate)
+        if form.is_valid():
+            estimate.length = form.cleaned_data['length']
+            estimate.width = form.cleaned_data['width']
+            estimate.material = form.cleaned_data['material']
+            estimate.service = form.cleaned_data['service']
+            estimate.time_estimate = form.cleaned_data['time_estimate']
+            estimate.comment = form.cleaned_data['comment']
+
+            square_meters = estimate.length * estimate.width
+            square_footage = square_meters * Decimal('10.7639')
+
+            estimate.material_cost = square_footage * estimate.material.cost_per_square_foot
+            estimate.labor_cost = estimate.time_estimate * estimate.service.hourly_rate
+            estimate.total_cost = estimate.material_cost + estimate.labor_cost
+            estimate.save()
+
+            return redirect('estimate_result', estimate_id=estimate.id)
+    else:
+        form = ConstructionForm(instance=estimate)
+
+    return render(request, 'estimate_edit.html', {'form': form, 'estimate': estimate})
+
+
+def smeta_view(request):
+    estimates = Estimate.objects.filter(session_key=request.session.session_key)
+    return render(request, 'smeta_view.html', {'estimates': estimates})

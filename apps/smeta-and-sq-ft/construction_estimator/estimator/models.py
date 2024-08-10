@@ -24,6 +24,8 @@ class Estimate(models.Model):
     material_cost = models.DecimalField(max_digits=10, decimal_places=2)
     labor_cost = models.DecimalField(max_digits=10, decimal_places=2)
     total_cost = models.DecimalField(max_digits=10, decimal_places=2)
+    comment = models.TextField(blank=True, null=True, default="")  # Поле для комментария, опционально
+    session_key = models.CharField(max_length=40, default="")  # Поле для хранения сессии пользователя
 
     def __str__(self):
         return f"Estimate for {self.service.name} with {self.material.name}"
