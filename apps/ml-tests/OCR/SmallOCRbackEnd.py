@@ -7,7 +7,6 @@ import numpy as np
 from pdf2image import convert_from_path
 from werkzeug.utils import secure_filename
 import easyocr
-from google.cloud import vision
 
 app = Flask(__name__)
 
@@ -32,6 +31,20 @@ def preprocess_image(image):
 
     return processed_image
 
+# Function to detect text regions using contour detection
+def detect_text_regions(image):
+    # Find contours in the image
+    contours, _ = cv2.findContours(image, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+    text_regions = []
+    for cnt in contours:
+        x, y, w, h = cv2.boundingRect(cnt)
+        if w > 15 and h > 15:  # Filter out small regions
+            text_region = image[y:y+h, x:x+w]
+            text_regions.append(text_region)
+
+    return text_regions
+
 # Function to extract text using Tesseract configured for Russian
 def ocr_with_tesseract(image):
     # Convert image to PIL format for Tesseract
@@ -45,20 +58,10 @@ def ocr_with_tesseract(image):
 
     return text
 
-# Function to extract text using Google Cloud Vision
-def ocr_with_google_vision(image_path):
-    client = vision.ImageAnnotatorClient()
-    with open(image_path, 'rb') as image_file:
-        content = image_file.read()
-    image = vision.Image(content=content)
-    response = client.text_detection(image=image)
-    texts = response.text_annotations
-    return texts[0].description if texts else ""
-
 # Function to extract text using EasyOCR
-def ocr_with_easyocr(image_path):
+def ocr_with_easyocr(image):
     reader = easyocr.Reader(['ru'], gpu=False)
-    result = reader.readtext(image_path, detail=0)
+    result = reader.readtext(np.array(image), detail=0)
     return ' '.join(result)
 
 # Function to convert PDF to images
@@ -66,35 +69,34 @@ def convert_pdf_to_images(pdf_path):
     images = convert_from_path(pdf_path)
     return images
 
-# Function that runs OCR using all three models
+# Function that combines preprocessing, text region detection, and OCR
 def ocr_from_image(image_path):
     # Convert PDF to images (if the input is a PDF)
     images = convert_pdf_to_images(image_path) if image_path.lower().endswith('.pdf') else [Image.open(image_path)]
 
     tesseract_text = ""
-    google_text = ""
     easyocr_text = ""
 
     for image in images:
         # Convert PIL image to OpenCV format
         open_cv_image = np.array(image)
-        open_cv_image = open_cv_image[:, :, ::-1].copy()  # Convert RGB to BGR
+        open_cv_image = cv2.cvtColor(open_cv_image, cv2.COLOR_RGB2BGR)  # Convert RGB to BGR
 
         # Preprocess the image
         processed_image = preprocess_image(open_cv_image)
 
-        # Perform OCR using Tesseract
-        tesseract_text += ocr_with_tesseract(processed_image) + "\n"
+        # Detect text regions
+        text_regions = detect_text_regions(processed_image)
 
-        # Perform OCR using Google Cloud Vision
-        google_text += ocr_with_google_vision(image_path) + "\n"
+        for region in text_regions:
+            # Perform OCR using Tesseract
+            tesseract_text += ocr_with_tesseract(region) + "\n"
 
-        # Perform OCR using EasyOCR
-        easyocr_text += ocr_with_easyocr(image_path) + "\n"
+            # Perform OCR using EasyOCR
+            easyocr_text += ocr_with_easyocr(region) + "\n"
 
     return {
         "tesseract_text": tesseract_text,
-        "google_text": google_text,
         "easyocr_text": easyocr_text
     }
 
@@ -117,7 +119,7 @@ def upload_file():
             # Perform OCR using your script
             ocr_results = ocr_from_image(file_path)
             
-            # Return the extracted text from all OCR engines
+            # Return the extracted text from both OCR engines
             return jsonify(ocr_results)
         
         except Exception as e:

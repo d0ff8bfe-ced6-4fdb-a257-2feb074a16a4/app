@@ -88,8 +88,6 @@
         <div id="recognized-text"></div>
     </div>
 
-    
-
     <script>
         const dropZone = document.getElementById('drop-zone');
         const fileInput = document.getElementById('file-input');
@@ -140,7 +138,9 @@
                 const data = await response.json();
                 
                 if (response.ok) {
-                    recognizedText.textContent = data.text;
+                    // Combine the results from Tesseract and EasyOCR and display them
+                    recognizedText.innerHTML = `<strong>Tesseract OCR Output:</strong><pre>${data.tesseract_text}</pre><br>
+                                                <strong>EasyOCR Output:</strong><pre>${data.easyocr_text}</pre>`;
                     output.classList.remove('hidden');
                     uploadMessage.textContent = "";  // Clear the message after the text is recognized
                 } else {
