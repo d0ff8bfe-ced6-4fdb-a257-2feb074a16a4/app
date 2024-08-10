@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AR OBJ Viewer with Rotation on Quest 3</title>
+    <style>
+        body { margin: 0; }
+        canvas { display: block; }
+        button {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+<button id="arButton">Start AR</button>
+<script src="https://cdn.jsdelivr.net/npm/three@0.135.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.135.0/examples/js/loaders/OBJLoader.js"></script>
+
+<script>
+    let scene, camera, renderer;
+    let controller;
+    let model = null;
+    let previewMesh = new THREE.Group();  // Группа для объединения всех частей контура
+    let rotating = false;
+    let initialControllerPosition = null;
+
+    init();
+    animate();
+
+    function init() {
+        // Сцена
+        scene = new THREE.Scene();
+
+        // Камера
+        camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 20);
+
+        // Рендерер
+        renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.xr.enabled = true;
+        document.body.appendChild(renderer.domElement);
+
+        // Создаем кнопку для запуска AR
+        const arButton = document.getElementById('arButton');
+        arButton.addEventListener('click', function() {
+            navigator.xr.requestSession('immersive-ar', {
+                optionalFeatures: ['local-floor', 'bounded-floor']
+            }).then(onSessionStarted);
+        });
+
+        // Контроллер
+        controller = renderer.xr.getController(0);
+        controller.addEventListener('selectstart', onSelectStart);
+        controller.addEventListener('selectend', onSelectEnd);
+        controller.addEventListener('squeezestart', onSqueezeStart);  // Нажатие для начала вращения
+        controller.addEventListener('squeezeend', onSqueezeEnd);      // Окончание вращения
+        scene.add(controller);
+
+        // Свет
+        const light = new THREE.HemisphereLight(0xffffff, 0xbbbbff, 1);
+        light.position.set(0.5, 1, 0.25);
+        scene.add(light);
+
+        // Загрузка OBJ модели
+        const loader = new THREE.OBJLoader();
+        loader.load(
+            'https://dvv.k-lab.su/building.obj', // Путь к вашему OBJ файлу
+            function (obj) {
+                model = obj;
+                model.scale.set(0.05, 0.05, 0.05); // Масштабирование модели
+
+                // Создание контура для всех дочерних элементов
+                obj.traverse(function(child) {
+                    if (child.isMesh) {
+                        const wireframeGeometry = new THREE.WireframeGeometry(child.geometry);
+                        const wireframeMaterial = new THREE.LineBasicMaterial({ color: 0x00ff00 });
+                        const wireframe = new THREE.LineSegments(wireframeGeometry, wireframeMaterial);
+                        wireframe.scale.copy(child.scale);
+                        wireframe.position.copy(child.position);
+                        wireframe.rotation.copy(child.rotation);
+                        previewMesh.add(wireframe);
+                    }
+                });
+                previewMesh.scale.set(0.05, 0.05, 0.05);
+                scene.add(previewMesh);
+            },
+            undefined,
+            function (error) {
+                console.error('Ошибка загрузки OBJ файла:', error);
+            }
+        );
+    }
+
+    function onSelectStart() {
+        if (model) {
+            const position = new THREE.Vector3();
+            position.setFromMatrixPosition(controller.matrixWorld);
+
+            const clone = model.clone();
+            clone.position.copy(position);
+            clone.rotation.copy(previewMesh.rotation); // Применение текущего угла вращения
+            scene.add(clone);
+        }
+    }
+
+    function onSelectEnd() {
+        if (previewMesh) {
+            previewMesh.visible = true;
+        }
+    }
+
+    function onSqueezeStart() {
+        rotating = true;
+        const position = new THREE.Vector3();
+        position.setFromMatrixPosition(controller.matrixWorld);
+        initialControllerPosition = position.x; // Запомнить начальное положение контроллера по оси X
+    }
+
+    function onSqueezeEnd() {
+        rotating = false;
+        initialControllerPosition = null; // Сброс начального положения контроллера
+    }
+
+    function onSessionStarted(session) {
+        renderer.xr.setSession(session);
+        document.getElementById('arButton').style.display = 'none';
+    }
+
+    function animate() {
+        renderer.setAnimationLoop(render);
+    }
+
+    function render() {
+        if (previewMesh) {
+            const position = new THREE.Vector3();
+            position.setFromMatrixPosition(controller.matrixWorld);
+            previewMesh.position.copy(position);
+
+            if (rotating && initialControllerPosition !== null) {
+                // Изменение угла вращения в зависимости от движения контроллера по оси X
+                const deltaX = position.x - initialControllerPosition;
+                previewMesh.rotation.y += deltaX * 2; // Увеличьте множитель для ускорения вращения
+                initialControllerPosition = position.x; // Обновляем положение контроллера
+            }
+        }
+        renderer.render(scene, camera);
+    }
+
+    window.addEventListener('resize', function() {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    }, false);
+</script>
+</body>
+</html>
