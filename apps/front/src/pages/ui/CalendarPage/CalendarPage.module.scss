@@ -1,0 +1,12 @@
+.wrapper {
+  display: flex;
+  gap: 20px;
+
+  & .tasks {
+    flex: 1 1 25%;
+  }
+  & .calendar {
+    max-height: 75vh;
+    flex: 1 1 75%;
+  }
+}

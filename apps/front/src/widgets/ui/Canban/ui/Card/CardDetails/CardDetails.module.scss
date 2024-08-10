@@ -1,0 +1,123 @@
+.modal {
+  background-color: var(--bg);
+  padding: 20px;
+  border-radius: var(--border-radius-2);
+  min-width: 1000px;
+  max-width: 75vw;
+  & .heading {
+    justify-content: space-between;
+    display: flex;
+    gap: 20px;
+    align-items: center;
+    margin-bottom: 20px;
+    padding: 20px 0;
+    border-bottom: 3px solid var(--bg-dark);
+    & .time {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+
+  & .description {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 20px 0;
+    border-bottom: 3px solid var(--bg-dark);
+
+    & p {
+      text-wrap: wrap;
+      word-wrap: anywhere;
+    }
+
+    & .textArea {
+      padding: 20px;
+      resize: none;
+      outline: none;
+      border: 1px solid var(--bg-dark);
+      border-radius: var(--border-radius-4);
+      font: var(--paragraph-1);
+
+      &:focus {
+        outline: 1px solid #aaa;
+      }
+    }
+  }
+
+  & .labels {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 20px 0;
+    border-bottom: 3px solid var(--bg-dark);
+
+    &List {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+
+      &Item {
+        display: flex;
+        padding: 6px 12px;
+        border-radius: var(--border-radius-6);
+        align-items: center;
+        gap: 10px;
+      }
+    }
+  }
+
+  & .tasks {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 20px 0;
+    border-bottom: 3px solid var(--bg-dark);
+
+    &Heading {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    &List {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+
+      &Item {
+        display: flex;
+        gap: 20px;
+        align-items: center;
+        justify-content: space-between;
+
+        & .control {
+          display: flex;
+          gap: 20px;
+          align-items: center;
+        }
+
+        & .checkbox {
+          width: 20px;
+          height: 20px;
+          border-radius: 50%;
+        }
+      }
+    }
+  }
+
+  & .tools {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding: 20px 0;
+
+    &Button {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+    }
+  }
+}

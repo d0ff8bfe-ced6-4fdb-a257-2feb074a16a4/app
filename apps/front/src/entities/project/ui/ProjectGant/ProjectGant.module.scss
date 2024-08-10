@@ -1,0 +1,13 @@
+.wrapper {
+  background-color: var(--bg);
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  border-radius: var(--border-radius-4);
+  padding: 30px;
+
+  & svg {
+    max-width: max-content;
+    min-width: 100vw !important;
+  }
+}

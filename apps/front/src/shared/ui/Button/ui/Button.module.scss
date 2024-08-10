@@ -1,0 +1,210 @@
+.button {
+  transition: .3s all ease;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  &:disabled {
+    cursor: not-allowed;
+    filter: brightness(90%);
+  }
+
+  &:not(:disabled):hover {
+    filter: brightness(80%);
+  }
+
+  &:not(:disabled):active {
+    filter: brightness(70%);
+  }
+
+  &.primary {
+    border: 1px solid var(--primary);
+
+    &.filled {
+      background-color: var(--primary);
+    }
+  }
+
+  &.secondary {
+    border: 1px solid var(--secondary);
+
+    &.filled {
+      background-color: var(--secondary);
+    }
+  }
+
+
+  &.success {
+    border: 1px solid var(--success);
+
+    &.filled {
+      background-color: var(--success);
+    }
+
+  }
+
+
+  &.warning {
+    border: 1px solid var(--warning);
+
+    &.filled {
+      background-color: var(--warning);
+    }
+
+  }
+
+  &.danger {
+    border: 1px solid var(--danger);
+
+    &.filled {
+      background-color: var(--danger);
+    }
+
+  }
+
+
+  &.info {
+    border: 1px solid var(--info);
+
+    &.filled {
+      background-color: var(--info);
+
+    }
+  }
+
+
+  &.link {
+    border: 1px solid var(--link);
+
+    &.filled {
+      background-color: var(--link);
+    }
+  }
+
+
+  &.white {
+    border: 1px solid var(--white);
+
+    &.filled {
+      background-color: var(--white);
+    }
+  }
+
+  &.black {
+    border: 1px solid var(--black);
+
+    &.filled {
+      background-color: var(--black);
+    }
+  }
+
+  &.black {
+    border: 1px solid var(--black);
+
+    &.filled {
+      background-color: var(--black);
+    }
+  }
+
+  &.bg {
+    border: 1px solid var(--bg);
+
+    &.filled {
+      background-color: var(--bg);
+    }
+  }
+
+  &.bgDark {
+    border: 1px solid var(--bg-dark);
+
+    &.filled {
+      background-color: var(--bg-dark);
+    }
+  }
+
+
+  &.bgDarkBg {
+    background-color: var(--bg-dark);
+    border: 1px solid var(--bg-dark);
+  }
+
+
+  &.h1 {
+    padding: var(--padding-3) var(--padding-1);
+  }
+
+  &.h2 {
+    padding: var(--padding-4) var(--padding-1);
+  }
+
+  &.h3 {
+    padding: var(--padding-5) var(--padding-2);
+  }
+
+  &.h4 {
+    padding: var(--padding-5) var(--padding-2);
+  }
+
+  &.h5 {
+    padding: var(--padding-6) var(--padding-3);
+  }
+
+  &.h6 {
+    padding: var(--padding-6) var(--padding-3);
+  }
+
+
+  &.borderH1 {
+    border-radius: var(--border-radius-1);
+  }
+
+  &.borderH2 {
+    border-radius: var(--border-radius-2);
+  }
+
+  &.borderH3 {
+    border-radius: var(--border-radius-3);
+  }
+
+  &.borderH4 {
+    border-radius: var(--border-radius-4);
+  }
+
+  &.borderH5 {
+    border-radius: var(--border-radius-5);
+  }
+
+  &.borderH6 {
+    border-radius: var(--border-radius-6);
+  }
+
+
+  &.dashed {
+    border-style: dashed;
+    background-color: inherit;
+
+    &:hover {
+      background-color: inherit;
+    }
+
+    &:active {
+      background-color: inherit;
+    }
+  }
+
+  &.default {
+    border-style: solid;
+    background-color: inherit;
+
+    &:hover {
+      background-color: inherit;
+    }
+
+    &:active {
+      background-color: inherit;
+
+    }
+  }
+
+}

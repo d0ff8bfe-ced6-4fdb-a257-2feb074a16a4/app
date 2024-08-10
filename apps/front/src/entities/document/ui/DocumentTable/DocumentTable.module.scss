@@ -1,0 +1,5 @@
+.wrapper {
+  & table {
+    border-radius: var(--border-radius-2) !important;
+  }
+}
