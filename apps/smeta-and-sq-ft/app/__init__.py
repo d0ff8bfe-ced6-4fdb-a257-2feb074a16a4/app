@@ -14,7 +14,7 @@ def create_app():
         # Import routes and models inside the app context to avoid circular imports
         from app import routes, models
         db.create_all()
-       if not models.Material.query.first():
+        if not models.Material.query.first():
             mock_materials = [
                 models.Material(name="Бетон", cost_per_sqft=10.0),
                 models.Material(name="Дерево", cost_per_sqft=5.0),
