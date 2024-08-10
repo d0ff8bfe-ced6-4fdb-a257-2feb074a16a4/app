@@ -3,7 +3,8 @@ from django.http import JsonResponse
 from .forms import ConstructionForm
 from .models import Material, Estimate
 from decimal import Decimal
-
+import openpyxl
+from django.http import HttpResponse
 def get_materials(request):
     service_id = request.GET.get('service_id')
     materials = Material.objects.filter(services__id=service_id).values('id', 'name')
@@ -109,6 +110,42 @@ def smeta_view(request):
     estimates = Estimate.objects.filter(session_key=request.session.session_key, saved_to_smeta=True)
     return render(request, 'smeta_view.html', {'estimates': estimates})
 
-def export_view(request):
-    # Здесь будет логика экспорта
-    return render(request, 'export.html')
+# def export_view(request):
+#     # Здесь будет логика экспорта
+#     return render(request, 'export.html')
+def export_to_excel(request):
+    # Создание объекта Excel
+    wb = openpyxl.Workbook()
+    ws = wb.active
+    ws.title = "Смета"
+
+    # Заголовки
+    ws.append(["Услуга", "Материал", "Длина (м)", "Ширина (м)", "Площадь (м²)", "Время (ч)", "Материальные расходы", "Трудовые расходы", "Общая стоимость", "Комментарий"])
+
+    # Получение данных из базы данных
+    session_key = request.session.session_key
+    estimates = Estimate.objects.filter(session_key=session_key, saved_to_smeta=True)
+
+    # Заполнение данными
+    for estimate in estimates:
+        square_meters = estimate.length * estimate.width
+        ws.append([
+            estimate.service.name,
+            estimate.material.name,
+            estimate.length,
+            estimate.width,
+            square_meters,
+            estimate.time_estimate,
+            estimate.material_cost,
+            estimate.labor_cost,
+            estimate.total_cost,
+            estimate.comment or ""
+        ])
+
+    # Создание ответа
+    response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+    response['Content-Disposition'] = 'attachment; filename=smeta.xlsx'
+
+    # Сохранение файла в ответ
+    wb.save(response)
+    return response
