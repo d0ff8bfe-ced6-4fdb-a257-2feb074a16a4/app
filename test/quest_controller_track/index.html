@@ -7,121 +7,138 @@
     <style>
         body { margin: 0; }
         canvas { display: block; }
-        #info {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            color: white;
-            background-color: rgba(0, 0, 0, 0.5);
-            padding: 10px;
-            font-family: Arial, sans-serif;
-            z-index: 1;
-        }
     </style>
 </head>
 <body>
-    <div id="info">Press any button or move joystick</div>
-    <script type="module">
-        import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.135.0/build/three.module.js';
-        import { ARButton } from 'https://cdn.jsdelivr.net/npm/three@0.135.0/examples/jsm/webxr/ARButton.js';
+<script type="module">
+    import * as THREE from 'https://cdn.jsdelivr.net/npm/three@0.135.0/build/three.module.js';
+    import { ARButton } from 'https://cdn.jsdelivr.net/npm/three@0.135.0/examples/jsm/webxr/ARButton.js';
+    import { TextGeometry } from 'https://cdn.jsdelivr.net/npm/three@0.135.0/examples/jsm/geometries/TextGeometry.js';
+    import { FontLoader } from 'https://cdn.jsdelivr.net/npm/three@0.135.0/examples/jsm/loaders/FontLoader.js';
 
-        let scene, camera, renderer;
-        let controller;
-        let infoDisplay;
+    let scene, camera, renderer;
+    let controller;
+    let labelMesh;
+    let font;
 
-        init();
-        animate();
+    init();
+    animate();
 
-        function init() {
-            // Сцена
-            scene = new THREE.Scene();
+    function init() {
+        // Сцена
+        scene = new THREE.Scene();
 
-            // Камера
-            camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 20);
+        // Камера
+        camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 20);
 
-            // Рендерер
-            renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            renderer.xr.enabled = true;
-            document.body.appendChild(renderer.domElement);
+        // Рендерер
+        renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.xr.enabled = true;
+        document.body.appendChild(renderer.domElement);
 
-            // Добавление AR-кнопки
-            document.body.appendChild(ARButton.createButton(renderer));
+        // Добавление AR-кнопки
+        document.body.appendChild(ARButton.createButton(renderer));
 
-            // Контроллер
-            controller = renderer.xr.getController(0);
-            controller.addEventListener('selectstart', onSelectStart);
-            controller.addEventListener('selectend', onSelectEnd);
-            controller.addEventListener('connected', onControllerConnected);
-            controller.addEventListener('disconnected', onControllerDisconnected);
-            scene.add(controller);
+        // Контроллер
+        controller = renderer.xr.getController(0);
+        controller.addEventListener('selectstart', onSelectStart);
+        controller.addEventListener('selectend', onSelectEnd);
+        scene.add(controller);
 
-            // Свет
-            const light = new THREE.HemisphereLight(0xffffff, 0xbbbbff, 1);
-            light.position.set(0.5, 1, 0.25);
-            scene.add(light);
+        // Свет
+        const light = new THREE.HemisphereLight(0xffffff, 0xbbbbff, 1);
+        light.position.set(0.5, 1, 0.25);
+        scene.add(light);
 
-            // Элемент для отображения информации
-            infoDisplay = document.getElementById('info');
-        }
+        // Загрузка шрифта для текстовой метки
+        const loader = new FontLoader();
+        loader.load('https://threejs.org/examples/fonts/helvetiker_regular.typeface.json', function (loadedFont) {
+            font = loadedFont;
+            createLabelMesh();
+        });
+    }
 
-        function onControllerConnected(event) {
-            const gamepad = event.data.gamepad;
-            gamepad.hapticActuators[0].pulse(0.5, 100);
-        }
+    function createLabelMesh() {
+        const geometry = new TextGeometry('Ready', {
+            font: font,
+            size: 0.05,
+            height: 0.01
+        });
+        const material = new THREE.MeshBasicMaterial({ color: 0xffffff });
+        labelMesh = new THREE.Mesh(geometry, material);
+        labelMesh.position.set(0, 0, -0.1);
+        controller.add(labelMesh);
+    }
 
-        function onControllerDisconnected() {
-            infoDisplay.textContent = 'Controller disconnected';
-        }
+    function onSelectStart() {
+        updateLabel('Button Pressed!');
+    }
 
-        function onSelectStart() {
-            infoDisplay.textContent = 'Button Pressed!';
-        }
+    function onSelectEnd() {
+        updateLabel('Button Released!');
+    }
 
-        function onSelectEnd() {
-            infoDisplay.textContent = 'Button Released!';
-        }
+    function updateLabel(text) {
+        if (labelMesh) {
+            // Удаление старой метки
+            controller.remove(labelMesh);
+            labelMesh.geometry.dispose();
+            labelMesh.material.dispose();
 
-        function animate() {
-            renderer.setAnimationLoop(render);
-        }
-
-        function render() {
-            const session = renderer.xr.getSession();
-            if (session) {
-                const inputSources = session.inputSources;
-                for (const inputSource of inputSources) {
-                    if (inputSource.gamepad) {
-                        const gamepad = inputSource.gamepad;
-                        handleGamepadInput(gamepad);
-                    }
-                }
-            }
-            renderer.render(scene, camera);
-        }
-
-        function handleGamepadInput(gamepad) {
-            let infoText = 'Buttons: ';
-            gamepad.buttons.forEach((button, index) => {
-                if (button.pressed) {
-                    infoText += `Button ${index} pressed | `;
-                }
+            // Создание новой метки
+            const geometry = new TextGeometry(text, {
+                font: font,
+                size: 0.05,
+                height: 0.01
             });
+            const material = new THREE.MeshBasicMaterial({ color: 0xffffff });
+            labelMesh = new THREE.Mesh(geometry, material);
+            labelMesh.position.set(0, 0, -0.1);
+            controller.add(labelMesh);
+        }
+    }
 
-            if (gamepad.axes.length >= 2) {
-                const x = gamepad.axes[2].toFixed(2);
-                const y = gamepad.axes[3].toFixed(2);
-                infoText += `Joystick: (${x}, ${y})`;
+    function animate() {
+        renderer.setAnimationLoop(render);
+    }
+
+    function render() {
+        const session = renderer.xr.getSession();
+        if (session) {
+            const inputSources = session.inputSources;
+            for (const inputSource of inputSources) {
+                if (inputSource.gamepad) {
+                    const gamepad = inputSource.gamepad;
+                    handleGamepadInput(gamepad);
+                }
             }
+        }
+        renderer.render(scene, camera);
+    }
 
-            infoDisplay.textContent = infoText;
+    function handleGamepadInput(gamepad) {
+        let infoText = 'Buttons: ';
+        gamepad.buttons.forEach((button, index) => {
+            if (button.pressed) {
+                infoText += `Button ${index} pressed | `;
+            }
+        });
+
+        if (gamepad.axes.length >= 2) {
+            const x = gamepad.axes[2].toFixed(2);
+            const y = gamepad.axes[3].toFixed(2);
+            infoText += `Joystick: (${x}, ${y})`;
         }
 
-        window.addEventListener('resize', function() {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-        }, false);
-    </script>
+        updateLabel(infoText);
+    }
+
+    window.addEventListener('resize', function() {
+        camera.aspect = window.innerWidth / window.innerHeight;
+        camera.updateProjectionMatrix();
+        renderer.setSize(window.innerWidth, window.innerHeight);
+    }, false);
+</script>
 </body>
 </html>
