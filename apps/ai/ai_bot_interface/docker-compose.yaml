@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  python-app:
+    container_name: ai_bot_interface
+    image: python:3.12.2
+    volumes:
+      - .:/usr/src/app
+    working_dir: /usr/src/app
+    command: python main.py
+    environment:
+      - PYTHONUNBUFFERED=1
+      - DB_HOST=mysql-1
+    build:
+      context: .
+      dockerfile: Dockerfile
