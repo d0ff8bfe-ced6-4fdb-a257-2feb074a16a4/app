@@ -1,5 +1,5 @@
 from django.urls import path
-from estimator.views import estimate_view, estimate_result, estimate_edit, smeta_view, export_view, get_materials, export_to_excel
+from estimator.views import estimate_view, estimate_result, estimate_edit, smeta_view, get_materials, export_to_excel
 from django.contrib import admin
 
 urlpatterns = [
