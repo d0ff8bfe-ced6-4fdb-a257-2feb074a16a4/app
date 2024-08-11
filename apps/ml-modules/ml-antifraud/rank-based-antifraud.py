@@ -60,4 +60,4 @@ if st.button("Вычислить"):
     st.write(st.session_state.progress_summary_text)
     st.progress(summary / total_score)
 
-# streamlit run rent-dublicating-checker.py
+# streamlit run rank-based-antifraud.py

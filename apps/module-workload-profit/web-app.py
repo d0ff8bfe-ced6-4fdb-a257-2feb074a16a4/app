@@ -87,3 +87,5 @@ st.write(profit_matrix)
 
 if st.button("Подсчитать эффективные пары"):
     st.write(eval_hungarian(profit_matrix))
+
+# streamlit run web-app.py

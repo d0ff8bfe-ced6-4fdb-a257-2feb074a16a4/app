@@ -15,6 +15,7 @@ import tempfile
 from openpyxl import load_workbook
 from openpyxl.drawing.image import Image
 
+print("begin")
 
 WORK_DIR = Path(__file__).parent
 DATA_DIR = WORK_DIR / "templates"
@@ -26,6 +27,7 @@ template.save(FILE_PATH)
 template.close()
 
 workbook = load_workbook(filename=str(FILE_PATH))
+workbook.template = False
 worksheet = workbook.active
 # worksheet = workbook.worksheets[0]
 
@@ -84,12 +86,9 @@ if st.button("Подтвердить, подписать документ"):
     img.height = 100
     worksheet.add_image(img, "B59")
     st.header("Данные заполнены, подпись поставлена")
-    # workbook.worksheets[0] = worksheet
+    workbook.save(DATA_DIR / "approved.xlsx")
 
 if st.button("Отправить"):
     st.write("Документ сохранен, отправлен на подтверждение")
-    with tempfile.NamedTemporaryFile(delete=False) as f:
-        workbook.save(DATA_DIR / "approved.xlsx")
-        # workbook.close()
 
 # streamlit run doc-generator.py

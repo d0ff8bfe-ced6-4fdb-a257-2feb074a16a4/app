@@ -87,15 +87,8 @@ for filename in os.listdir(DATA_PATH):
 # documents = parser.load_data(DATA_PATH)
 print(documents)
 
-# OpenAI(api_base="http://localhost:1234/v1",
-#        api_key="lm-studio")
 
-# docx_pages = [doc.text for doc in documents]
-
-# instructor_embedding = InstructorEmbedding(model_name='gpt4free')
-
-
-index = VectorStoreIndex.from_documents(documents, embed_model=embedding_function)
+index = VectorStoreIndex.from_documents(documents)
 query_engine = index.as_query_engine(llm=llm)
 
 # TODO: Проблема здесь Error in G4FLLM._call: can only join an iterable
