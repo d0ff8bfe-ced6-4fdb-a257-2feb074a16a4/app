@@ -25,6 +25,8 @@ curl-cffi = "*"
 llama-index-llms-langchain = "*"
 llama-index-embeddings-huggingface = "*"
 llama-index-embeddings-langchain = "*"
+xlsxwriter = "*"
+openpyxl = "*"
 
 [dev-packages]
 
